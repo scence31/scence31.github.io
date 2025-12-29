@@ -16,6 +16,7 @@ tags: [java, array, copy]
 
 > **💡 핵심**: 인덱스는 항상 **0**부터 시작한다는 점! `arr[3]`을 호출하면 `ArrayIndexOutOfBoundsException` 에러를 만나게 되니 주의해야 해요.
 
+---
 
 ## 📌 2. 배열을 왜 쓸까?
 단순히 "편해서"라기보다 효율성 때문입니다. 
