@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="memberMapper">
+    
+    	<resultMap id="memberResultSet" type="member">
+    		<id column="USERNO" property="userNo" />
+    		<result column="USERID" property="userId" />
+    		<result column="USERPWD" property="userPwd" />
+    		<result column="USERNAME" property="userName" />
+    		<result column="GENDER" property="gender" />
+    		<result column="AGE" property="age" />
+    		<result column="PHONE" property="phone" />
+    		<result column="ADDRESS" property="address" />
+    		<result column="ENROLLDATE" property="enrolldate" />
+    	</resultMap>
+    	
+    	<insert id="insertMember" parameterType="member">
+    		INSERT INTO MEMBER VALUES(SEQ_USERNO.NEXTVAL
+    								, #{userId}, #{userPwd}, #{userName}
+    								, #{gender}, #{age}, #{email}
+    								, #{phone}, #{address}, DEFAULT)
+    	</insert>
+    	
+    	<select id="selectAll" resultMap="memberResultSet">
+    		SELECT *
+    		  FROM MEMBER
+    		 ORDER BY USERNO ASC
+    	
+    	</select>
+    	
+    	<select id="selectByUserId" parameterType="string" resultMap="memberResultSet">
+    		SELECT *
+    		  FROM MEMBER
+    		 WHERE USERID = #{userId}
+    	
+    	</select>
+    	
+    	<select id="selectByUserName" parameterType="string" resultMap="memberResultSet">
+    		SELECT *
+    		  FROM MEMBER
+    		 WHERE USERNAME LIKE '%' || #{keyword} || '%'
+    	
+    	</select>
+    	
+    	<update id="updateMember" parameterType="member">
+    		UPDATE MEMBER
+    		   SET USERPWD = #{userPwd},
+    		   	   EMAIL = #{email}, 
+    		   	   PHONE = #{phone},
+    		   	   ADDRESS = #{address}
+    		 WHERE USERID = #{userId}
+    	
+    	</update>
+    	
+    	<delete id="deleteMember" parameterType="string">
+    		DELETE
+    		  FROM MEMBER
+    		 WHERE USERID = #{userId}
+    	
+    	</delete>
+    
+    </mapper>
+    
+    
+    <!-- 
+    	* namespace
+    	- 해당 mapper 파일의 고유한 별칭을 부여하는 부분
+    	- SqlSession 객체에서 쿼리문 실행시, 
+    	어떤 xml 파일의 쿼리문을 찾아서 실행할 것인지 namespace 댈 예정
+    	
+    	
+    	* resultMap
+    	- 마이바티스 핵심기능 중 하나로, mapper 파일 상단에 기술함.
+    	- SELECT문 실행의 경우 ResultSet으로부터 조회된 컬럼값을 하나씩 뽑아서
+    	내가 지정한 VO객체의 각 필드에 값을 담는(맵핑) JDBC 코드를 줄여줌
+    	
+    	<resultMap id="" type="">
+    		<id column="" property="" />
+    		<result column="" property="" />
+    		
+    		id column은 PK컬럼명, result column은 나머지
+    		
+    		
+    		
+    	* mapper 파일에 SQL문 담기
+    	
+    	1. DML문(insert면 insert, update면 ~)
+    	- parameterType은 생략 가능(그냥 원래 하던거랑 비슷하게 생각)
+    	<insert id=""
+    			parameterType="">
+    			
+    			
+    			
+    	2. SELECT문
+    	<select id=""
+    			parameterType=""
+    			resultMap=""
+    			쿼리문
+    			
+    	- 반드시 resultType 또는 resultMap 속성 써야함.
+    	select문으로 조회된 결과 리저트셋을 뽑아서 자바타입으로 변경시키는 역할
+    	
+    	
+    	
+    	* 마이바티스에서 미완성된 쿼리문 완성하기(위치홀더 채우기)
+    	#{필드명 or 변수명}
+    	
+    	list면 필드명 아님 변수명
+    	
+    	
+    
+     -->
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     

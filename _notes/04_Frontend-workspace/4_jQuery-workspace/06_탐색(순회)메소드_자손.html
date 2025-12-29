@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탐색 (순회) 메소드 - 자손</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        .wrap, .wrap * {
+            border : 1px solid lightgray;
+            display : block;
+            margin : 15px;
+            padding : 5px;
+            color : gray;
+
+        }
+    </style>
+</head>
+<body>
+    
+    <h3>2. 자손(Descendants) 탐색 메소드 : 기준이 되는 요소의 하위요소들 선택</h3>
+
+    <div class="wrap">
+        조상
+        <div>
+            div(증조할머니)
+            <ul>
+                ul (할머니)
+                <li>
+                    li(엄마)
+
+                    <span>span</span>
+                </li>
+            </ul>
+        </div>
+        <div>
+            div(할아버지)
+            <p>
+                p(아빠)
+                <span>span</span>
+            </p>
+        </div>
+    </div>
+
+    <pre>
+        <h4>$("선택자").children();</h4>
+        parent와 유사
+
+        <h4>$("선택자").children("선택자");</h4>
+
+        <h4>$("선택자").find("선택자");</h4>
+        until 유사
+
+        <h4>$("선택자").children();</h4>
+
+    </pre>
+
+    <script>
+        $(function() {
+
+            let style1 = {color : "red"   , border : "2px solid red"};
+            let style2 = {color : "blue"  , border : "2px solid blue"};
+            let style3 = {color : "green" , border : "2px solid green"};
+            let style4 = {color : "orange", border : "2px solid orange"};
+            let style5 = {color : "purple", border : "2px solid purple"};
+
+            // children()
+            $(".wrap").children().css(style1); // $(".wrap>*")
+            $(".wrap").children().children().css(style2); // 자손의 자손 중첩
+            // 메소드체이닝 가능
+
+            // children("선택자")
+            $(".wrap").children().children("ul").css(style3); 
+            // 자손 중 ul 요소만 고르겠다
+
+            // find("선택자")
+            $(".wrap").find("li").css(style4);   // $(".wrap li")
+            $(".wrap").find("span").css(style5); // $(".wrap span")
+
+            // 자손 탐색 메서드는 충분히 우리가 배웠던
+            // 자손, 후손 선택자로 대체해서 사용 가능!!!
+
+        })
+    </script>
+</body>
+</html>

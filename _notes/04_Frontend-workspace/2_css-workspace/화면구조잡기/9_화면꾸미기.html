@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>화면꾸미기</title>
+    <style>
+
+        * {
+            font-family: "Gamja Flower", sans-serif;
+            font-size: large;
+        }
+
+        div, form {
+            /* border: 1px solid blueviolet;*/  /* 가이드라인 */
+            box-sizing: border-box;
+        }
+
+        /* 전체를 감싸는 wrap */
+        .wrap {
+            width: 1000px;
+            height: 800px;
+            margin: auto;
+        }
+
+        /* 헤더 네이게이터 컨텐트 풋터 공통스타일 부여*/
+        .wrap>div {
+            width: 100%;
+        }
+
+        /* 각각의 스타일 부여 */
+        #header {
+            height: 20%;
+        }
+        #nevigator {
+            height: 5%;
+        }
+        #content {
+            height: 55%;
+        }
+        #footer {
+            height: 20%;
+        }
+
+        /* header, content 내부 상세영역 */
+        /* _1, _2, _3 공통스타일 */
+        #header>div, #content>div {
+            height: 100%;
+            float: left;
+        }
+
+        /* 각각 스타일 */
+        #header_1 {
+            width: 20%;
+            
+        }
+        #header_2 {
+            width: 65%;
+        }
+        #header_3 {
+            width: 15%;
+        }
+
+        #content_1 {
+            width: 15%;
+        }
+        #content_2 {
+            width: 60%;
+        }
+        #content_3 {
+            width: 25%;
+        }
+
+        /* ==============푸터===================*/
+
+
+        /* footer 상세영역 _1, _2 */
+        #footer>div {
+            width: 100%;
+        }
+        #footer_1 {
+            height: 20%;
+        }
+        #footer_2 {
+            height: 80%;
+        }
+        /* footer_2 상세영역 p1 p2*/
+        #footer_2>p {
+            /* border: 1px solid red; */
+            margin: 0px; /* p요소는 기본적으로 top/bottom 마진이 있음 */
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+
+        #footer {
+            background-color: rgb(238, 228, 247);
+            border: 1px solid;
+            border-style: none;
+            border-radius: 14px;
+        }
+
+        /* 각각의 스타일 부여 */
+        #p1 {
+            height: 80%;
+            padding: 2px 15px; /* 상하 / 좌우 여백 */
+        }
+        #p2 {
+            height: 20%;
+            text-align: center;
+        }
+
+        /* footer_1 a요소들 */
+        #footer_1>a {
+            text-decoration: none;
+            color: black;
+            font-weight: 580;
+            font-size: 16px;
+            margin: 15px;
+            vertical-align: middle; /* 수직구조에서 가운데로 옮김 */
+        }
+
+        /* ================로그인폼======================*/
+
+
+        /* 로그인폼 전체 */
+        #login_form {
+            width: 100%;
+            height: 30%;
+        }
+
+        /* login_form 내부 영역 _input, _etc 공통스타일 부여 */
+        #login_form>* {
+            width: 100%;
+        }
+
+        /* 각각 스타일 마저 부여*/
+        #login_form_input {
+            height: 50%;
+        }
+        #login_form_etc {
+            height: 50%;
+            text-align: center;
+            
+        }
+        
+        /* login_form_input 상세영역 _id_pwe, _btn */
+        #login_form_input>* {
+            height: 100%;
+            float: left;
+        }
+
+        /* 각각 스타일 부여*/
+        #login_input_id_pwd {
+            width: 65%;
+        }
+        #login_input_btn {
+            width: 35%;
+        }
+
+        /* login_input_id_pwd 상세스타일 부여 - input 요소 두 개 있음 */
+        #login_input_id_pwd>input {
+            width: 100%;
+            height: 50%;
+            box-sizing: border-box; /* input 요소도 테두리 포함해야댐. 박스-사이징: 볼더-박스 */
+            border-top-left-radius: 14px;
+            border-bottom-left-radius: 14px;
+            border: 1px groove rgb(180, 36, 180);
+            border-right-style: none;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        /* login_input_btn 상세스타일 부여 - input 요소 한 개*/
+        #login_input_btn>input {
+            width: 100%;
+            height: 100%; /* 버튼모양은 기본적으로 박스-사이징임 */
+            background-color: rgb(182, 182, 241);
+            border-style: none;
+            border-top-right-radius: 14px;
+            color: rgb(255, 255, 255);
+        }
+
+        /* login_form_etc 상세스타일 부여 - a요소들 */
+        #login_form_etc>a {
+            text-decoration: none;
+            color: black;
+            font-size: 12px;
+            margin: 10px;
+            vertical-align: middle;
+        }
+
+        /* ==================검색창 만들기==================*/
+
+
+        /* 검색창 정중앙에 배치 */
+        #header_2 {
+            position: relative; /* header_2 기준점으로 삼음(부모요소) */
+        }
+
+        /* 전체를 감싸는 search_form */
+        #search_form {
+            width: 80%;
+            height: 20%;
+            position: absolute; /* search_form 절대위치로 이동할 것(자식요소) */
+            margin: auto; /* 안하면 안움직임 */
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px; /* 사방에서 0px로 잡아당겨서 중앙에 배치됨, 이 때 margin: auto 필요 */
+        }
+
+        /* search_form 상세영역 - search_text, search_btn*/
+        #search_form>div {
+            height: 100%;
+            float: left;
+        }
+
+        /* 각각 스타일 부여*/
+        #search_text {
+            width: 80%;
+        }
+        #search_btn {
+            width: 20%;
+        }
+
+        /* input 요소들에 상세스타일 부여 - 검색어입력용/검색버튼용 */
+        #search_form input { /* 후손 */
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
+        #search_form input[type=submit] {
+            background-color: rgb(182, 182, 241);
+            border-style: none;
+            border-top-right-radius: 14px;
+            border-bottom-right-radius: 14px;
+            color: white;
+        }
+        #search_form input[type=search] {
+            border-top-left-radius: 14px;
+            border-bottom-left-radius: 14px;
+            border: 1px groove rgb(180, 36, 180);
+            border-right-style: none;
+
+        }
+
+        /*=================메뉴바 만듦=============*/
+       /* 메인메뉴를 나타내는 navi */
+        #navi {
+            /* border: 1px solid blue; /*
+            margin: 0px; /* p요소처럼 ul요소도 마진 있어서 없애기 */
+            height: 100%;
+            box-sizing: border-box;
+            padding: 0px; /* ul요소는 padding 또한 기본적으로 있어서 없애기 */
+            list-style-type: none; /* 불릿기호 없애기 */
+        }
+
+        /* 각 메인메뉴를 나타내는 li 요소들*/
+        #navi>li {
+            /* border: 1px solid orange; */
+            width: 15%;
+            height: 100%;
+            float: left;
+            text-align: center;
+        }
+
+        /* 메인, 서브메뉴의 a요소들 */
+        #navi a {
+            /* border: 1px solid green; */
+            text-decoration:  none;
+            color: rgb(69, 108, 216);
+            font-size: 13px;
+            font-weight: 900;
+            width: 100%;
+            height: 100%; /* 대부분의 인라인요소는 width/height 적용 안댐(input, button 예외) */
+            display: block;
+            /* vertical-align: middle; vertical-align은 인라인요소에만 사용 가능 */
+            line-height: 35px; /* 블럭요소 안에서 텍스트 수직에서 가운데로 바꾸기(height와 일치) */
+
+            transform: scale(1.4); /* 트랜스폼속성: CSS에서 애니메이션 효과를 줌 */
+                                /* scale(n): CSS함수 중 하나, 해당 요소를 확대해서 보여줌
+                                    1은 1배 */
+        }
+
+        /* 서브메뉴의 ul 요소들 */
+        #navi>li>ul {
+            /* border: 1px solid purple; */
+            padding: 0px;
+            list-style-type: none;
+            display: none; /* 숨기고 공간차지도 안함 */
+        }
+
+        /* 메인메뉴 항목에 마우스 올렸을 때 서브메뉴가 보이게 효과 추가 */
+        #navi>li>a:hover+ul { /* ul요소는 블럭이라서 display로 노출 */
+            display: block;
+        }
+
+        /* 서브메뉴도 마우스 올라갔을 때 유지되게 보정해야함 */
+        #navi>li>ul:hover {
+            display: block;
+        }
+
+        /* 메뉴 텍스트효과 간단하게 */
+        #navi a:hover {
+            color: rgb(5, 5, 136);
+            font-size: 15px;
+        }
+
+
+        /*============= header1 스타일 영역============= */
+        #header_1 {
+            position: relative;
+            
+        }
+        
+        #logo>img {
+            position: absolute;
+            margin: auto;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+        }
+
+        .table1 {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            border: 4px dotted white;
+            background-color: rgb(213, 207, 218);
+            border-radius: 14px;
+            border-collapse: collapse;
+        }
+
+        .table, th, td{
+            font-size: 15px;
+
+        }
+
+        .way {
+            text-align: center;
+            background-color: rgb(241, 203, 203);
+        }
+        #login_easy {
+            background-color: rgb(225, 206, 206);
+            border: 1px solid white;
+
+            color: rgb(67, 29, 29);
+            width: 100%;
+            border-top-left-radius: 14px;
+            border-bottom-left-radius: 14px;
+        }
+
+        .img1 {
+
+            width: 100%;
+            height: 100%;
+        }
+        input[type=checkbox] {
+
+            width: 9px;
+            margin-right: -6px;
+            vertical-align: middle;
+            
+        }
+
+        .id_save {
+            text-decoration: none;
+            color: black;
+            font-size: 12px;
+            margin: 10px;
+            vertical-align: middle;
+
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="wrap">
+        <div id="header">
+            <div id="header_1"> <!-- 로고이미지: 클릭하면 학원홈페이지로-->
+                <a id="logo" href="https://kh-academy.co.kr/main/main.kh">
+                    <img src="../resources/화면 캡처 2025-09-12 165529.png" sizes="auto">
+                </a> <!-- ../ 다른 곳에 있는 파일 -->
+            </div>
+            <div id="header_2">
+                <form id="search_form" action="search" method="get"> <!-- 검색창 영역을 form 태그로 지정-->
+                    <div id="search_text"> <!-- 검색어를 입력할 부분-->
+                        <input id="searchId"  type="search" name="keyword" autofocus>
+                    </div>
+                    <div id="search_btn"> <!-- 검색버튼이 들어갈 부분 -->
+                        <input type="submit" value="검색">
+                    </div>    
+                </form>
+            </div>
+            <div id="header_3"></div>
+        </div>
+        <div id="nevigator">
+            <ul id="navi"> <!-- 메인메뉴 -->
+                <li><a href="">Java</a></li>
+                <li><a href="">Oracle</a></li>
+                <li>
+                    <a href="">Front-end</a>
+                    <ul>
+                        <li><a href="">HTML</a></li>
+                        <li><a href="">CSS</a></li>
+                        <li><a href="">JavaScript</a></li>
+                        <li><a href="">jQuery</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="">Server</a>
+                    <ul>
+                        <li><a href="">JDBC</a></li>
+                        <li><a href="">Servlet</a></li>
+                        <li><a href="">JSP</a></li>
+                        <li><a href="">AJAX</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="">Framework</a>
+                    <ul>
+                        <li><a href="">MyBatis</a></li>
+                        <li><a href="">Spring</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div> <!-- 메뉴바를 nevigator라고 함 -->
+        <div id="content">
+            <div id="content_1">
+                <table class="table1" border="1">
+                    <tr>
+                        <th>CLASS</th>
+                        <th>교과목</th>
+                        <th>강사</th>
+                    </tr>
+                    <tr>
+                        <td>A</td>
+                        <td>Java</td>
+                        <td>홍길동</td>
+                    </tr>
+                    <tr>
+                        <td>B</td>
+                        <td>Oracle</td>
+                        <td>이순신</td>
+                    </tr>
+                    <tr>
+                        <td>C</td>
+                        <td>HTML</td>
+                        <td>강감찬</td>
+                    </tr>
+                    <tr>
+                        <td>D</td>
+                        <td>Server</td>
+                        <td>김가현</td>
+                    </tr>
+                    <tr>
+                        <td>E</td>
+                        <td>Framework</td>
+                        <td>조자룡</td>
+                    </tr>
+                </table>
+            </div>
+            <div id="content_2">
+                <div><h2 class="way">오시는 길(당산역 출발, 도보 8분)</h2>
+                    <img class="img1" src="../resources/스크린샷 2025-09-13 131324.png"` alt="오는법">
+                    <h2 class="way">문의/상담: 010-1234-5678</h2>
+                </div>
+            </div>
+            <div id="content_3">
+                <div id="login_form"> <!-- 1. 전체내용을(로그인폼) 감싸는 div-->
+                    <form id="login_form_input" action="member/login" method="post"> <!-- 2-1. 입력받는 input요소와 로그인버튼이 위치할 영역 -->
+                        <div id="login_input_id_pwd"> <!-- 3-1. 왼쪽: id/pwd 입력받을 text영역-->
+                            <input type="text" name="userId" placeholder="아이디" required> <br>
+                            <input type="password" name="userPwd" placeholder="비밀번호" required>
+                        </div>
+                        <div id="login_input_btn"> <!-- 3-2. 오른쪽: 로그인 button 영역-->
+                            <input type="submit" value="로그인">
+                        </div>
+                        
+                    </form> <!-- 2-2. 회원가입, ID/PWD 찾기 페이지 요청 a요소들이 위치할 영역 -->
+
+                    <div id="login_form_etc">
+                        <div>
+                            <input id="login_easy" type="submit" value="간편로그인">
+                        </div>
+                        <input type="checkbox" checked><label class="id_save">아이디 저장</label>
+                        <a href="">회원가입</a>
+                        <a href="">ID/PWD 찾기</a>
+                    </div>
+                </div>
+                <div>
+                    <img class="img1" src="../resources/Marten-snow-winter-wildlife_2880x1800.jpg" alt="담비">
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+                   <div id="footer_1">
+            <a href="">질문</a> |
+            <a href="">수업자료</a> |
+            <a href="">실습문제</a> |
+            <a href="">소셜</a> |
+            <a href="">프로젝트공지</a> |
+            <a href="">다이렉트메시지</a>
+        </div>
+            <div id="footer_2">
+                <p id="p1">
+                    강남점 : 서울특별시 강남구 테헤란로14길 6 남도빌딩 2F, 3F, 4F, 5F, 6F <br>
+                    종로점 : 서울특별시 중구 남대문로 120 그레이츠 청계(구 대일빌딩) 2F, 3F <br>
+                    당산점 : 서울특별시 영등포구 선유동2로 57 이레빌딩(구관) 19F, 20F <br>
+                    논현점 : 서울특별시 강남구 논현로 132길 9 마루빌딩 1F, 2F, 3F <br>
+                    부산점 : 부산 부산진구 중앙대로 627 삼비빌딩 2F, 12F
+                
+                </p>
+                <p id="p2">
+                    Copyright © 1998-2025 KH Information Educational Institute All Right Reserved
+                </p> <!-- p도 영역나누기 할 수 있음(div도 가능) -->
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- logback 환경설정 configuration -->
+<configuration>
+	<!-- 
+		- 로깅 메시지 레벨 - 기록된 메시지의 중요도를 나타내는 개념
+			총 6단계 있음(단계 높을수록 중요도 높음. 1단계일수록 자주 발생)
+			
+			1 TRACE : 가장 상세한 로그 - 프로그램 내 모든 작업을 기록(사소한 작업 포함). 잘 안 씀
+			2 DEBUG : 개발할 때 확인이 필요한 부분을 기록 - 프로그램 코드 흐름 상 어느 시점, 변수에 무슨 값이 있는지 등 출력할 때 사용. 개발자가 자주 사용
+			3 INFO : 정상적인 프로그래밍 흐름의 경우 사용자에게 알려줘야 하는 부분을 기록 - 배포, 운영 단계에서 사용자를 위해 사용.
+			4 WARN : 잠재적인 문제 상황에 대한 기록 - 실행은 되지만 추후 문제가능성 기록
+			5 ERROR : 실행이 안 되는 경우 기록. 런타임 에러, 예외 관련 기록
+			
+			6 FATAL : 시스템 자체에 치명적인 오류 기록 - 컴퓨터 자체(logback에서는 제공 안해줌)
+		
+		- logback-spring.xml 파일의 설정 태그와 그 역할
+			appender 태그 : 로깅 위치 where 설정(콘솔, 파일, 이메일, 등등)
+			logger 태그 : 로깅 수행을 위한 Logger 객체 설정
+			root 태그 : 전반적인 로깅 설정을 담당 logger 태그로 설정한 것 나머지를 설정할 때 주로 사용
+		
+		- 메시지 레이아웃
+			%level : 메시지 레벨(6단계 중 1개). -5level : 해당 메시지 레벨을 5칸 왼쪽에(옵션임)
+			%logger : 로거 정보 - 로깅이 발생한 풀클래스명
+			%msg : 메시지 내용
+			%n : 개행문자(\을 의미) == 엔터
+			%d : 시간정보 - 그냥 작성하면 "연-월-일 시:분:초,밀리세컨초" 형식(커스텀 가능 - %d{날짜형식커스텀} SimpleDateFormat 형식과 같음)
+		
+		- 사용 가능한 Appender 종류
+			ConsoleAppender : 로그를 콘솔에 출력하게 하는 클래스
+			FileAppender : 파일에 출력(단순 파일에만) 클래스
+			** RollingFileAppender : 파일에 출력(용량 또는 날짜에 따라 파일을 분류) 클래스
+			SMTPAppender : 로그 내용을 이메일로 전송 클래스
+			DBAppender : DB에 저장 클래스
+			
+		 -->
+		 
+		 <!-- appender 영역 콘솔/파일/롤링파일 -->
+		 <!-- 콘솔 -->
+		 <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		 	<encoder>
+		 		<pattern>[%-5level] - %msg : %logger %d{yyyy-MM-dd HH:mm:ss} %n</pattern>
+		 	</encoder>
+		 </appender>
+		 
+		 <!-- 파일 -->
+		 <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		 	<file>C:\mylog\out.log</file>
+		 	<!-- 로그를 남길 파일명 - 절대경로/상대경로 설정 가능 -->
+		 	<append>true</append>
+		 	<!-- true 이어쓰기 false 덮어쓰기 -->
+		 	<encoder>
+		 		<pattern>[%-5level] %msg : %logger %d %n</pattern>
+		 	</encoder>
+		 </appender>
+		 
+		 <!-- 롤링파일 -->
+		 <appender name="DAILY" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		 	<file>C:\mylog\daily.log</file>
+		 	<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+		 		<fileNamePattern>C:\mylog\daily-%d{yyyyMMdd}.log</fileNamePattern>
+		 	</rollingPolicy>
+		 	<encoder>
+		 		<pattern>[%-5level] - %msg : %logger %d{HH:mm:ss} %n</pattern>
+		 	</encoder>
+		 </appender>
+		 
+		 <!-- logger 영역 : com.kh.backend 패키지 하위에서 모든 로그를 출력하겠다. - ~level 속성값까지 레벨 수준 범위설정 -->
+		 <logger name="com.kh.backend" level="INFO"> <!-- 실무에선 level=DEBUG로 하고, 베포할 때 level=INFO 수정 -->
+		 	<appender-ref ref="DAILY" />
+		 	<appender-ref ref="CONSOLE" />
+		 </logger>
+		 
+		 <!-- root 영역 : 스프링, 마이바티스 등 자체 로그 출력구문 차단관련(써드파티 로그는 막기) -->
+		 <root level="OFF">
+		 
+		 </root>
+</configuration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

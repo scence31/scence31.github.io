@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>객체2</title>
+    <style>
+
+        .area {
+            background-color: pink;
+            border: 1px solid black;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>* 객체2</h1>
+
+    <h3>- 객체 배열을 사용한 다량의 데이터 관리</h3>
+
+    <button onclick="test1();">실행확인</button>
+
+    <div id="area1" class="area"></div>
+
+    <script>
+        function test1() {
+
+            // 테스트용 객체 세팅
+            let student0 = {name: "김갑생", java: 100, oracle: 90, html: 90, css: 60};
+            let student1 = {name: "김말똥", java: 60, oracle: 100, html: 80, css: 70};
+            let student2 = {name: "홍길동", java: 70, oracle: 80, html: 100, css: 50};
+            let student3 = {name: "박말순", java: 100, oracle: 100, html: 80, css: 90};
+        
+            // 위 학생정보를 담을 배열 생성
+            let students = [];
+            
+            // 빈 배열에 학생들 정보 담기
+            // students[0] = student0;
+            // students[1] = student1;
+            // students[2] = student2;
+            // students[3] = student3;
+            
+            students.push(student0); // [0]
+            students.push(student1); // [1]
+            students.push(student2); // [2]
+            students.push(student3); // [3]
+
+            //  console.log(students);
+            // console.log(students[0]);
+            // console.log(students[0].name, students[0]["name"]);
+            
+            // 반복문 활용
+            for(let i = 0; i < students.length; i++) {
+
+                // console.log(students[i].name);
+
+                // 모든 학생에게 자바스크립트 속성값 100 추가
+                // 객체에 속성을 추가하고자 할때는 객체명.속성명 = 값;
+                students[i].javascript = 100;
+
+                // 모든 학생 객체에 getSum 메소드속성도 추가
+                students[i].getSum = function() {
+
+                    return this.java + this.oracle + this.html + this.css + this.javascript;
+                };
+
+                // getAge 메소드속성도 추가
+                students[i].getAvg = function() {
+
+                    return this.getSum() / 5;
+                };
+
+            }
+            // 속성 추가 후 반복문 빠져나오고 출력
+            console.log(students);
+
+            // 위 학생 정보를 div에 출력
+            const area1 = document.getElementById("area1");
+
+            for(let i in students) {
+
+                // console.log(i);
+                // console.log(students[i]);
+                // i에는 0 ~ 마지막 인덱스 수가 담김
+
+                with(students[i]) {
+                area1.innerHTML += "이름: " + name 
+                                + ", 총점: " + getSum()
+                                + ", 평균: " + getAvg() + "<br>";
+                    
+                };
+                // 객체배열이라도 with 키워드 사용 가능함 
+            }
+        }
+    </script>
+
+    <br><hr>
+
+    <h3>- 생성자 함수</h3>
+
+    <!--
+        * 자바에서 객체생성시 먼저 정보를 담는 그릇같은 존재인 class 생성하고 객체 만듦
+
+        - 자바스크립트도 클래스 역할 개념있음
+        1. 생성자함수 (ECMA Script 5버전 문법)
+        2. 클래스 (ECMA Script 6버전 문법)
+    -->
+
+    <p>
+        - 객체를 생성할 때, 동일한 속성들을 정의했다가
+        그 틀에 맞게 매번 동일한 모양의 객체를 만들어내고 싶을 때 사용 <br>
+        - 즉, 객체생성시 동일한 속성들을 정의해둔 함수 <br>
+        - 한 번 만들어 두면 new 키워드를 이용해서 객체를 매번 같은 모양으로 생성 가능 <br>
+        - 자바로 따지면 클래스와 생성자코드가 결합된 형태 <br>
+        - 생성자 함수 이름은 대문자로 시작(명명규칙)
+    </p>
+
+    <button onclick="test2();">실행확인</button>
+
+    <div id="area2" class="area"></div>
+
+    <script>
+        function test2() {
+
+            // 학생관리 프로그램 만든다고 가정
+            //  let student0 = {name: "김갑생", java: 100, oracle: 90, html: 90, css: 60};
+            // name 등 속성을 갖고있어야 함, 위처럼 매번 나열하면 힘듦
+
+            //생성자함수를 통해 학생객체 생성해보기
+            let student0 = new Student("김갑생", 100, 90, 90, 70, 100);
+            let student1 = new Student("김말똥", 60, 70, 100, 60, 60);
+            let student2 = new Student("홍길동", 70, 80, 90, 90, 100);
+            let student3 = new Student("박말순", 100, 100, 80, 100, 90);
+
+            // console.log(student0);
+
+            // 위의 학생객체들을 담을 배열 생성
+            const students = [student0, student1, student2, student3,];
+
+            // console.log(students);
+
+            // 반복문으로 div 출력
+            for(let i = 0; i < students.length; i++) {
+
+                document.getElementById("area2").innerHTML += students[i];
+            }
+
+
+        }
+
+        // 학생 한명의 정보를 나타낼 수 있는 생성자함수
+        function Student(name, java, oracle, html, css, javascript) {
+            // 생성자함수는 기본적으로 자바의 매개변수생성자 모양임
+
+            // 1. 빈 객체인 this 생성
+            // let this = {};
+
+            // 2. 빈 객체에 name ~ javascript까지 속성 추가
+            // 2-1. 일반속성 정의
+            // 자바 클래스의 필드부 역할
+            this.name = name;
+            this.java = java;
+            this.oracle = oracle;
+            this.html = html;
+            this.css = css;
+            this.javascript = javascript;
+
+            // 2-2. 메소드속성 정의
+            // 자바 클래스의 메소드부 역할
+            this.getSum = function() {
+
+                return this.java + this.oracle + this.html + this.css + this.javascript;
+            };
+
+            this.getAvg = function() {
+
+                return this.getSum() / 5;
+            };
+
+            this.toString = function() {
+
+                return "이름: " + this.name 
+                    + ", 총점: " + this.getSum()
+                    + ", 평균: " + this.getAvg() + "<br>";
+            }
+
+
+            // 3. 그 객체를 리턴
+            // return this; // 생략(알아서 리턴됨)
+        }
+    </script>
+
+    <br><hr>
+
+    <h3>- Date 내장객체</h3>
+
+    <button onclick="test3();">실행확인</button>
+
+    <div id="area3" class="area"></div>
+
+    <script>
+        function test3() {
+
+            var area3 = document.getElementById("area3");
+
+            // * 자바스크립트의 Date 내장객체
+            // - 연 월 일 시 분 초 표현하기 위한 객체
+            // 생성자함수를 통해 생성해서 사용
+
+            // 생성자함수를 통해 Date 객체 생성하기
+            let date1 = new Date();
+
+            area3.innerHTML = "Date(): " + date1 + "<br>";
+            // 현재 날짜/시간 (자바 동일)
+
+            // 특정날짜? 매개변수 이용(자바동일)
+
+            let date2 = new Date(2021, 2 - 1, 15, 17, 30, 23, 5000);
+
+            area3.innerHTML += "Date(연, 월, 일, 시, 분, 초+밀리세컨초): " + date2 + "<br>";
+            // 생성자함수를 호출할 때 매개변수 지정하면 특정날짜 세팅 가능
+            // 근데 월은 +1 후 세팅되기 떄문에 -1로 제시
+            // 시분초에 밀리세컨초 ms 단위까지 세팅 가능
+            // 1초 = 1000밀리세컨초
+
+            // ---------------------------------------------
+
+            // * Date 내장객체에서 제공하는 유용한 메소드들
+
+            // 세팅된 Date 객체로부터 연도/월(+1)/일/요일만 알아내고 싶다면?
+            area3.innerHTML += "연도: " + date1.getFullYear() + "<br>";
+            area3.innerHTML += "월: " + (date1.getMonth() + 1) + "<br>";
+            area3.innerHTML += "일: " + date1.getDate() + "<br>";
+            area3.innerHTML += "요일: " + date1.getDay() + "<br>";
+            // 일요일: 0
+
+            // 시간/분/초 grtHours() getMinutes() getSeconds()
+
+            // 연습문제 1.
+            // 종강일 D-day 구하기 => 종강일 - 오늘날짜
+            let endDate = new Date(2026, 1-1, 5); // 2026년 1월 5일
+            let now = new Date();
+
+            area3.innerHTML += "<hr>";
+            area3.innerHTML += "종강일 디데이: " + (endDate - now) + "<br>";
+            // 밀리세컨초 단위로 알려줌
+            // 1분 == 6만밀리세컨초
+            // 1시간 == 360만밀리세컨초
+            // 1일 == 24*360만밀리세컨초
+            let dday = (endDate - now) / (24*3600000);
+
+            area3.innerHTML += "종강일 디데이" + Math.ceil(dday) + "<br>";
+
+        }
+    </script>
+    
+
+    
+
+</body>
+</html>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br>

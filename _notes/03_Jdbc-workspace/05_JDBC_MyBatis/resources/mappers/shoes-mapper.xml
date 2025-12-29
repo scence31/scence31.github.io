@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="shoesMapper">
+    	<resultMap id="shoesResultSet" type="shoes">
+    		<id column="SH_CODE" property="shoesCode" />
+    		<result column="SH_NAME" property="shoesName" />
+    		<result column="BRAND" property="brand" />
+    		<result column="PRICE" property="price" />
+    		<result column="STOCK" property="stock" />
+    		<result column="STATUS" property="status" />
+    	</resultMap>
+    	
+    	<insert id="insertShoes" parameterType="shoes">
+    		INSERT INTO TB_SHOES VALUES(#{shoesCode}, #{shoesName}, #{brand}, #{price}, #{stock}, #{status})
+    	</insert>
+    	
+    	<select id="selectAll" parameterType="shoes" resultMap="shoesResultSet">
+    		SELECT * FROM TB_SHOES
+    	</select>
+    	
+    	<update id="updateShoes" parameterType="shoes">
+    		UPDATE TB_SHOES
+    		   SET SH_NAME = #{shoesName},
+    		   	   BRAND = #{brand},
+    		   	   PRICE = #{price},
+    		   	   STOCK = #{stock},
+    		   	   STATUS = #{status}
+    		 WHERE SH_CODE = #{shoesCode}
+    	</update>
+    	
+    	<select id="selectByShoesName" parameterType="shoes" resultMap="shoesResultSet">
+    		SELECT *
+    		  FROM TB_SHOES
+    		 WHERE SH_NAME LIKE '%' || #{keyword} || '%'
+    	</select>
+    	
+    	<select id="selectByShoesCode" parameterType="shoes" resultMap="shoesResultSet">
+    		SELECT *
+    		  FROM TB_SHOES
+    		 WHERE SH_CODE = #{shoesCode}
+    	</select>
+    	
+    	<delete id="deleteShoes" parameterType="shoes">
+    		DELETE
+    		  FROM TB_SHOES
+    		 WHERE SH_CODE = #{shoesCode}
+    	</delete>
+    
+    </mapper>

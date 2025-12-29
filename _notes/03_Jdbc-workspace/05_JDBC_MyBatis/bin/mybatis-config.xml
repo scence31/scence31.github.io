@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>		<!-- xml 파일임을 알려주는 부분 -->
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+ <configuration>
+ 	<settings>
+ 		<setting name="jdbcTypeForNull" value="NULL" />
+ 	</settings>
+ 	
+ 	<typeAliases>
+ 		<typeAlias type="com.kh.model.vo.Member" alias="member" />
+ 	</typeAliases>
+ 	
+ 	<environments default="development">
+ 		<environment id="development">
+ 			<transactionManager type="JDBC" />
+ 			
+ 			<dataSource type="POOLED">
+ 				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
+ 				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+ 				<property name="username" value="JDBC" />
+ 				<property name="password" value="JDBC" />
+ 			
+ 			</dataSource>
+ 		
+ 		</environment>
+ 	</environments>
+ 	
+ 	<mappers>
+ 		<mapper resource="mappers\member-mapper.xml" />
+ 	</mappers>
+ </configuration>
+  
+  
+  
+  <!-- 
+  		* !DOCTYPE configuration
+  		이 xml 문서의 형식이 configuration(환경설정)임을 알려줌(즉 문서 내용이 환경설정임)
+  		이 문서의 시작/종료태그가 configuration 태그여야 함.
+  		
+  		* DTD
+  		이 xml 문서의 유효성을 검사해주는 부분(문법체크)
+  		configuration 하위태그들 중 잘못된 태그가 있는지,
+  		태그 안 속성에 누락된 것이 있는지 빨간 밑줄로 검사해줌
+  		
+  		- xml 파일은 항상 시작/종료태그 세트로 작성이지만,
+  		태그 사이에 딱히 적을 값이 없다면 한번에 종료 가능. 끝에 /> 처리.
+   -->
+   
+   <!-- 
+   <configuration>
+   : 환경설정 시작
+   
+   
+   
+   <settings>
+   : MyBatis 구동시 선언할 설정들을 작성하는 영역, insert or update 빈 데이터 오면 NULL 입력
+   <setting name="" value="" />
+   
+   
+   
+   <typeAliases>
+   : VO클래스의 풀클래스명을 별칭으로 치환. 마이바티스는 풀클래스명으로 언급함 / VO 전에 먼저~ CNFE 오류.
+   <typeAlias type="" alias="" />
+   
+   
+   
+   <environments default="">
+   : 마이바티스에서 연동할 DB의 정보들을 기술하는 영역. 여러 개의 DB 정보를 등록할 수 있음.
+   environment 단수태그 하나로 DB접속 하나를 표현함.
+   근데 이 DB 정보를 안겹치게 id속성을 부여하고 어떤 DB를 메인으로 할지 default 속성으로 지정해야 함
+   <environment id="" >
+   <transactionManager type="" /> 		
+   : 내가 직접 트랜잭션 처리구문을 작성할지 말지 설정. type이 JDBC면 내가, MANAGED면 자동커밋
+   <dataSource type="POOLED or UNPOOLED">
+   : JDBC 과정의 핵심인 Connection 객체에 대한 설정을 지정하는 부분.
+   : 트랜잭션 관련 설정임. JDBC 등록구문이나 DB접속관련 값들
+   <property name="" value="" />
+   <property name="" value="" />
+   <property name="" value="" />
+   ...
+   
+   * POOLED: 커넥션 풀 이용함. 객체를 한 번 만들고 보관하고 계속 갖다 씀. <=> UNPOOLED
+   * 참고) Connection Pool: 메모리 공간 내부에 커넥션 객체를 담아둘 수 있는 영역.
+   (그동안 우린 트랜잭션 1개당 커넥션 1개 만들어서 작업 끝나면 매번 반납함. 이젠 보관해서 사용할 것)
+   
+   
+   
+   <mappers>
+   : 실행할 SQL문을 담아둔 xml파일(mapper파일)들의 경로를 등록하는 영역.
+   단, 위에 typeAliases처럼 파일생성 전에 먼저 등록하면 FNFE 오류발생
+   <mapper resource="" />
+   
+   
+    -->
+    
+  
+    
+    

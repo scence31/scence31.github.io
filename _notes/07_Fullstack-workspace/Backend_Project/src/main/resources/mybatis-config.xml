@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "mybatis-3-config.dtd" >
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	<typeAliases>
+		<package name="com.kh.backend"/>
+		<!-- 기존 typeAlias 단수태그로 했었음. 
+		package로 하면 @Alias 어노테이션 하면 됨-->
+	</typeAliases>
+</configuration>

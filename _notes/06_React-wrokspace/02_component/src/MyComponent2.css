@@ -1,0 +1,7 @@
+/* 외부스타일 방식을 쓸 때 쪼개기 - 가독성, 유지보수 */
+.second {
+    background-color: red;
+    font-weight: bold;
+    font-size: 20px;
+    text-decoration: underline;
+}

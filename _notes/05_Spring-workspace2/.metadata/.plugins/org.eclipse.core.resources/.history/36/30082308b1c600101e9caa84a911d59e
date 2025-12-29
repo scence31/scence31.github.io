@@ -1,0 +1,65 @@
+package com.kh.spring.member.model.dao;
+
+import java.util.ArrayList;
+
+import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.kh.spring.member.model.vo.Member;
+
+// @Component
+@Repository
+// > @Component, @Repository 모두 빈으로 등록해주는 어노테이션
+//   @Repository 어노테이션이 더 명시적이라 많이 쓰임!!
+//   (Repository : 저장소 라는 뜻, 여기서는 DB 를 뜻함)
+public class MemberDao {
+
+	// 로그인용 쿼리문 실행 메소드
+	public Member loginMember(SqlSessionTemplate sqlSession, Member m) {
+		
+		// SELECT 문 : 단일행 조회 (selectOne 메소드)
+		return sqlSession.selectOne("memberMapper.loginMember", m);
+	}
+	
+	// 회원가입용 쿼리문 실행 메소드
+	public int insertMember(SqlSessionTemplate sqlSession, Member m) {
+		
+		return sqlSession.insert("memberMapper.insertMember", m);
+	}
+	
+	// 회원 정보 수정용 쿼리문 실행 메소드
+	public int updateMember(SqlSessionTemplate sqlSession, Member m) {
+		
+		return sqlSession.update("memberMapper.updateMember", m);
+	}
+	
+	// 비밀번호 변경용 쿼리문 실행 메소드
+	public int updatePwd(SqlSessionTemplate sqlSession, Member m) {
+		
+		return sqlSession.update("memberMapper.updatePwd", m);
+	}
+	
+	// 회원 탈퇴용 쿼리문 실행 메소드
+	public int deleteMember(SqlSessionTemplate sqlSession, String userId) {
+		
+		return sqlSession.update("memberMapper.deleteMember", userId);
+	}
+
+	// 아이디 중복확인용 쿼리문 실행메소드
+	public int ajaxIdCheck(SqlSessionTemplate sqlSession, String checkId) {
+		
+		return sqlSession.selectOne("boardMapper.ajaxIdCheck", checkId);
+	}
+
+	public ArrayList<Member> selectMemberList(SqlSessionTemplate sqlSession) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}
+
+
+
+
+
+

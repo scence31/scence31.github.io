@@ -1,0 +1,14 @@
+spring.application.name=Spring_Project
+
+# 프로젝트 구동 시 필요한 설정들 (context path, 포트번호)
+server.servlet.context-path=/spring
+server.port=8006
+
+# 메인페이지의 url 주소
+# http://localhost:8006/spring
+
+# View Resolver 설정 (JSP 파일 경로 자동완성)
+spring.mvc.view.prefix=/WEB-INF/views/
+spring.mvc.view.suffix=.jsp
+
+

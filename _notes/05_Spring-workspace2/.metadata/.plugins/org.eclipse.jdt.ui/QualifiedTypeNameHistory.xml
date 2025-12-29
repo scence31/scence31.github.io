@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="com.kh.spring.common.model.vo.PageInfo"/>
+    <fullyQualifiedTypeName name="com.kh.spring.common.template.Pagination"/>
+    <fullyQualifiedTypeName name="java.sql.Date"/>
+    <fullyQualifiedTypeName name="java.text.SimpleDateFormat"/>
+    <fullyQualifiedTypeName name="java.io.File"/>
+    <fullyQualifiedTypeName name="java.util.Date"/>
+    <fullyQualifiedTypeName name="com.kh.spring.board.model.vo.Category"/>
+    <fullyQualifiedTypeName name="com.kh.spring.common.template.FileRenamePolicy"/>
+    <fullyQualifiedTypeName name="org.springframework.ui.Model"/>
+    <fullyQualifiedTypeName name="com.kh.ajax.model.vo.Member"/>
+    <fullyQualifiedTypeName name="com.kh.spring.member.model.vo.Member"/>
+    <fullyQualifiedTypeName name="jakarta.servlet.http.Cookie"/>
+    <fullyQualifiedTypeName name="com.kh.email.EmailProjectApplicationTests"/>
+    <fullyQualifiedTypeName name="jakarta.activation.DataSource"/>
+    <fullyQualifiedTypeName name="java.util.Collections"/>
+    <fullyQualifiedTypeName name="java.net.URL"/>
+</qualifiedTypeNameHistroy>

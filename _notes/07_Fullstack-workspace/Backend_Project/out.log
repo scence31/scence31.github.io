@@ -1,0 +1,9 @@
+INFO DEBUGINFO INFO INFO INFO INFO INFO INFO INFO INFO INFO INFO WARN ERRORINFO INFO WARN ERROR[INFO ] Starting BackendProjectApplication using Java 21.0.8 with PID 6212 (C:\07_Fullstack-workspace\Backend_Project\target\classes started by scenc in C:\07_Fullstack-workspace\Backend_Project) : com.kh.backend.BackendProjectApplication 2025-12-05 14:14:55,068 
+[INFO ] No active profile set, falling back to 1 default profile: "default" : com.kh.backend.BackendProjectApplication 2025-12-05 14:14:55,068 
+[INFO ] Started BackendProjectApplication in 0.964 seconds (process running for 15501.616) : com.kh.backend.BackendProjectApplication 2025-12-05 14:14:55,989 
+[INFO ] Starting BackendProjectApplicationTests using Java 21.0.8 with PID 73576 (started by scenc in C:\07_Fullstack-workspace\Backend_Project) : com.kh.backend.BackendProjectApplicationTests 2025-12-05 14:15:08,636 
+[INFO ] No active profile set, falling back to 1 default profile: "default" : com.kh.backend.BackendProjectApplicationTests 2025-12-05 14:15:08,648 
+[INFO ] Started BackendProjectApplicationTests in 3.689 seconds (process running for 5.735) : com.kh.backend.BackendProjectApplicationTests 2025-12-05 14:15:11,426 
+[INFO ] 난 info : com.kh.backend.BackendProjectApplicationTests 2025-12-05 14:15:12,019 
+[WARN ] 난 warn : com.kh.backend.BackendProjectApplicationTests 2025-12-05 14:15:12,019 
+[ERROR] 난 error : com.kh.backend.BackendProjectApplicationTests 2025-12-05 14:15:12,019 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="noticeMapper">
+
+	<!-- 
+		NOTICE 테이블로부터 조회된 내용을
+		자바의 Notice 객체로 옮겨 담는 ResultMap
+	-->
+	<resultMap id="noticeResultSet" type="notice">
+		<id column="NOTICE_NO" property="noticeNo" />
+		<result column="NOTICE_TITLE" property="noticeTitle" />
+		<result column="USER_ID" property="noticeWriter" />
+		<result column="COUNT" property="count" />
+		<result column="CREATE_DATE" property="createDate" />
+		
+		<result column="NOTICE_CONTENT" property="noticeContent" />
+		<!-- 조회 시 없는 컬럼이면 알아서 맵핑시키지 않고 그냥 건너 뛴다!! -->
+	</resultMap>
+	
+	<!-- 공지사항 목록 조회용 쿼리문 -->
+	<select id="selectNoticeList" resultMap="noticeResultSet">
+		SELECT NOTICE_NO
+		     , NOTICE_TITLE
+		     , USER_ID
+		     , COUNT
+		     , CREATE_DATE
+		  FROM NOTICE N
+		  JOIN MEMBER ON (NOTICE_WRITER = USER_NO)
+		 WHERE N.STATUS = 'Y'
+		 ORDER BY NOTICE_NO DESC
+	</select>
+	
+	<!-- 공지사항 작성용 쿼리문 -->
+	<insert id="insertNotice" parameterType="notice">
+		INSERT INTO NOTICE(NOTICE_NO
+		                 , NOTICE_TITLE
+		                 , NOTICE_CONTENT
+		                 , NOTICE_WRITER)
+		            VALUES(SEQ_NNO.NEXTVAL
+		                 , #{noticeTitle}
+		                 , #{noticeContent}
+		                 , #{noticeWriter})
+	</insert>
+	
+	<!-- 공지사항 조회수 증가용 쿼리문 -->
+	<update id="increaseCount" parameterType="_int">
+		UPDATE NOTICE
+		   SET COUNT = COUNT + 1
+		 WHERE NOTICE_NO = #{nno}
+		   AND STATUS = 'Y'
+	</update>
+	
+	<!-- 공지사항 상세 조회용 쿼리문 -->
+	<select id="selectNotice" parameterType="_int" 
+							  resultMap="noticeResultSet">
+		SELECT NOTICE_NO
+		     , NOTICE_TITLE
+		     , NOTICE_CONTENT
+		     , USER_ID
+		     , CREATE_DATE
+		  FROM NOTICE N
+		  JOIN MEMBER ON (NOTICE_WRITER = USER_NO)
+		 WHERE NOTICE_NO = #{nno}
+		   AND N.STATUS = 'Y'
+	</select>
+	
+	<!-- 공지사항 수정용 쿼리문 -->
+	<update id="updateNotice" parameterType="notice">
+		UPDATE NOTICE
+		   SET NOTICE_TITLE = #{noticeTitle}
+		     , NOTICE_CONTENT = #{noticeContent}
+		 WHERE NOTICE_NO = #{noticeNo}
+		   AND STATUS = 'Y'
+	</update>
+	
+	<!-- 공지사항 삭제용 쿼리문 -->
+	<update id="deleteNotice" parameterType="_int">
+		UPDATE NOTICE
+		   SET STATUS = 'N'
+		 WHERE NOTICE_NO = #{nno}
+		   AND STATUS = 'Y'
+	</update>
+	
+</mapper>
+
+
+
+
+

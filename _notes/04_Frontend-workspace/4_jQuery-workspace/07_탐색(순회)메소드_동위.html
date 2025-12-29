@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>탐색(순회) 메소드 - 동위</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        .wrap, .wrap>* {
+            border : 1px solid lightgray;
+            display : block;
+            margin : 15px;
+            padding : 5px;
+            color : gray;
+
+        }
+    </style>
+</head>
+<body>
+
+    <h3>3. 동위(sideways) 탐색 메소드 : 같은 레벨에 있는 요소들을 선택할 수 있는 메소드</h3>
+
+    <div class="wrap">
+        <p>p</p>
+        <span>span</span>
+        <h2>h2</h2>
+        <p>p</p>
+    </div>
+
+    <pre>
+        <h4>$("선택자").siblings();</h4>
+        선택된 요소와 같은 레벨에 있는 모든 요소들을 다 선택
+
+        <h4>$("선택자").siblings("선택자");</h4>
+        선택된 요소와 같은 레벨에 있는 요소들 중에서도 일치하는 것만
+    
+        <h4> $("선택자").next(); </h4>
+        선택된 요소와 같은 레벨에 있는 요소들 중에서도
+        바로 다음 요소 딱 하나만 선택
+
+        <h4> $("선택자").nextAll(); </h4>
+        선택된 요소와 같은 레벨에 있는 요소들 중에서
+        바로 다음 요소들을 모두 다 선택
+
+        <h4> $("선택자").nextUntil("선택자"); </h4>
+        선택된 요소와 같은 레벨에 있는 다음 요소들 중에서
+        제시한 값과 일치하는 요소들 까지만 선택
+
+        <h4> $("선택자").prev(); </h4>
+        선택된 요소와 같은 레벨에 있는 요소들 중에서도
+        바로 이전 요소 딱 하나만 선택
+
+        <h4> $("선택자").prevAll(); </h4>
+        선택된 요소와 같은 레벨에 있는 요소들 중에서
+        바로 이전 요소들을 모두 다 선택
+
+        <h4> $("선택자").prevUntil("선택자"); </h4>
+        선택된 요소와 같은 레벨에 있는 이전 요소들 중에서
+        제시한 값과 일치하는 요소들 까지만 선택
+
+    </pre>
+
+    <script>
+        $(document).ready(function() {
+
+            // 앞으로 부여할 스타일 객체들 세팅
+            const style1 = {color : "red"  , border : "2px solid red"};
+            const style2 = {color : "blue" , border : "2px solid blue"};
+            const style3 = {color : "green", border : "2px solid green"};
+            const style4 = {color : "aqua" , backgroundColor : "magenta"};
+
+            // siblings()
+            $("h2").siblings().css(style1);
+
+            // siblings("선택자")
+            $('h2').siblings('p').css(style2);
+
+            // next()
+            $('h2').next().css(style3);
+
+            // nextAll()
+            $('h2').nextAll().css(style4);
+
+            // nextUntil()
+            $('h2').nextUntil().css("font-size", "2em");
+
+            // prev()
+            $('h2').prev().css('backgroundColor', "pink");
+
+            // prevAll()
+            $('h2').prevAll().css(style4);
+
+            // prevUntil("선택자")
+            $('h2').prevUntil('p').css("backgroundColor", "black");
+
+            // CSS 선택자는 동위레벨 요소 중
+            // 이전에 나오는 요소들을 골라주는 선택자 없엉서
+            // prev 계열의 메소드가 은근 유용함
+        })
+    </script>
+
+    
+    
+</body>
+</html>

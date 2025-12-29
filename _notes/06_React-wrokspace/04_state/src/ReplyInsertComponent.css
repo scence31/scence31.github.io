@@ -1,0 +1,25 @@
+#replyInsertForm {
+    margin : 5px;
+    padding: 5px;
+
+}
+
+#replyWriter {
+    width: 300px;
+    height: 30px;
+    box-sizing: border-box;
+}
+
+#replyContent {
+
+    width: 300px;
+    height: 100px;
+    box-sizing: border-box;
+    resize: none;
+}
+
+#replyInsertForm button[type=submit] {
+    width: 300px;
+    height: 30px;
+    box-sizing: border-box;
+}

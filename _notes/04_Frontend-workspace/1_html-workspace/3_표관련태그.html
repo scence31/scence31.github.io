@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>표관련 태그</title>
+
+</head>
+<body>
+    <h1>표 만들기</h1>
+
+    <p>
+        colspan="2" : 2열을 합치겠다. <br>
+        rowspan="3" : 3행을 합치겠다. <br><br>
+
+        생략하면 기본값 1. <br>
+        칸마다 colspan과 rewspan의 합을 맞춰가며 오와 열을 맞춘다. <br><br>
+
+        thead / tbody / tfoot (/tobdy 아래에)
+
+    </p>
+    <h2>주간메뉴표</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th width="40">구분</th>
+                <th width="80">월(8/21)</th>
+                <th width="80">화(8/22)</th>
+                <th width="80">수(8/23)</th>
+                <th width="80">목(8/24)</th>
+                <th width="80">금(8/25)</th>
+            </tr>
+        </thead>
+            <tbody>
+            <tr>
+                <td height="100" rowspan="4">중<br>식</td>
+                <td height = 20>계란프리타타</td>
+                <td>탕수육</td>
+                <td>제육두루치기</td>
+                <td>훈제오리로스</td>
+                <td>수제돈까스</td>           
+            </tr>
+            <tr>
+                <td height="100" colspan="1"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td rowspan="2" height="10"></td>
+                <td rowspan="2"></td>
+                <td rowspan="2"></td>
+                <td rowspan="2"></td>
+                <td rowspan="2"></td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                <td>원산지</td>
+                <td colspan="5"></td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="6">주간</td>
+            </tr>
+        </tfoot>
+    </table>           
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자바스크립트 추가 문법 2</title>
+    <style>
+        div {
+            width: 500px;
+            border: 1px solid black;
+            background-color: skyblue;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>ES6 추가적인 문법 2</h1>
+
+    <h3>5. 객체확장표현식</h3>
+
+    <p>
+        - 객체 선언시 "속성명: 속성값" 나열하던 방식을 축약해줌
+    </p>
+
+    <button onclick="extendsTest();">확인하기4</button>
+
+    <div id="area4"></div>
+    
+    <script>
+        var extendsTest = () => {
+
+            let area4 = document.getElementById('area4');
+
+            // 기존 객체선언방식(정석)
+            let name = '홍길동';
+            let kor = 92;
+            let math = 88;
+            let eng = 100;
+            let favoriteClass = 'FavoriteClass';
+
+            let student1 = {
+
+                name : name,
+                kor : kor,
+                math :  math,
+                eng : eng,
+                myFavoriteClass : '수학',
+                toString : function() {
+
+                    return `${this.name} 학생의 국어점수: ${this.kor}, 수학점수: ${this.math}, 영어점수: ${this.eng}`;
+                    // 화살표함수로 이벤트핸들러 작성하면 this로 타겟 불러오기 불가능
+                }
+            };
+
+            area4.innerHTML = 'student1: ' + student1 + "<br>";
+
+            // 객체확장 표현식
+            let student2 = {
+
+                name,
+                kor,
+                math,
+                eng,
+                ['my' + favoriteClass] : "국어",
+                toString : function() {
+
+                    return `${this.name} 학생의 슈학점수 : ${this.math}, 영어점수: ${this.eng}입니다.`;
+                }
+            };
+            // 내부적으로 변수명이 자동으로 속성명을 잡히면서 객체가 생성되는 원리
+            // 또한 [문자열 + 문자열...]로 속성명을 만들 수 있음.
+
+            area4.innerHTML += "student2: " + student2 + "<br>";
+
+            area4.innerHTML += '학생1 최애과목 : ' + student1.myFavoriteClass + '<br>';
+            area4.innerHTML += '학생2 최애과목 : ' + student2.myFavoriteClass + '<br>';
+
+        };
+    </script>
+
+    <br><hr>
+
+    <h3>6. 구조분해할당</h3>
+
+    <p>- 변수 선언 및 초기화 또는 swap 등을 배열 또는 객체생성구문으로 간단하게 할 수 있도록 도와주는 문법</p>
+
+    <button onclick="destructuringTest();">확인하기5</button>
+    
+    <div id="area5"></div>
+
+    <script>
+        let destructuringTest = () => {
+
+            const area5 = document.getElementById('area5');
+
+            // 배열을 이용해서 변수선언
+            // 기존 방식
+            let arr1 = [10, 20];
+            let num1 = arr1[0]; // 10
+            let num2 = arr1[1]; // 20
+            let num3 = arr1[2] || 30;
+            // 배열애 값이 없으면 || 뒤에 값 지정
+            // 자바스크립트에서는 || 연산자를 삼항연산자처럼 쓸 수 있음.
+
+            area5.innerHTML = `num1 : ${num1} <br>`;
+            area5.innerHTML += `num2 : ${num2} <br>`;
+            area5.innerHTML += `num3 : ${num3} <br>`;
+
+            // 구조분해할당
+            let [num4, num5, num6 = 30] = arr1;
+            // let num4 num5 num6 = arr[0] [1] [2] 이렇게 됨
+
+            area5.innerHTML += `num4, num5, num6 : ${num4}, ${num5}, ${num6} <br>`;
+            // 배열의 경우 인덱스 자리수에 맞는 값을 할당
+
+            // 객체를 이용해서 선언
+            // 기존방식
+            let obj1 = {num7 : 10, num8 : 20};
+
+            let num7 = obj1.num7; // 10
+            let num8 = obj1.num8; // 20
+            let num9 = obj1.num9 || 30;
+
+            area5.innerHTML += `num7, num8, num9 : ${num7}, ${num8}, ${num9} <br>`;
+
+            // 구조분해할당
+            let obj2 = {num10 : 10, num11 : 20};
+
+            let {num10, num11, num12 = 30} = obj2;
+
+            area5.innerHTML += `num10, num11, num12 : ${num10}, ${num11}, ${num12} <br>`;
+
+            // 객체 표현법 하나 더 있음
+            let {num10 : value1, num11 : value2, value3 = 30} = obj2;
+
+            area5.innerHTML += `value1, value2, value3 : ${value1}, ${value2}, ${value3} <br>`;
+
+            // swap - 바꿔치기
+            // 두 개 이상의 변수에 각각 들었던 값을 바꿔치기하는 개념
+            let str1 = '안녕';
+            let str2 = '잘가';
+            console.log(str1, str2);
+
+            // swap 하기 위해선 보조해주는 변수를 사용함
+            let temp; // = temporary
+            temp = str1; // 안녕
+            str1 = str2; // 잘가
+            str2 = temp; // 안녕
+            console.log(str1, str2);
+
+            console.log('------------------');
+
+            let str3 = 'hello';
+            let str4 = 'bye';
+            console.log(str3, str4);
+
+            [str3, str4] = [str4, str3];
+            console.log(str3, str4);
+
+            // 구조분해할당은 리액트에서 굉장히 많이 사용하는 문법임
+            // 실제 리액트 라이브러리에서의 사용예시
+            let [name, setName] = ['홍길동', function(value) {name=value;}];
+            /*
+                let name = '홍길동';
+                let setName = function(value) {
+                    
+                    name = value;
+                };
+
+                이 시점 이후로 name 변수값을 변경하고자 할 경우
+                name = '고길동'; 또는 setName('고길동'); 사용할 수 있음
+            */
+        };
+    </script>
+
+    <br><hr>
+
+    <h3>7. 배열관련함수 (순회함수)</h3>
+
+    <!-- 배열에 반복돌릴 때 유용하게 쓸 수 있음. -->
+    <pre>
+        1. forEach
+        배열의 모든 인덱스에 대해 반복을 수행해주는 함수(jQuery에서 each 메소드와 가장 유사한 구조)
+        return 값이 없는 함수
+
+        2. map
+        forEach 함수와 유사하게 반복을 수행하지만, 매 번 콜백함수 내에서 리턴되는 값을 받아서 새로운 배열에 차곡 담아주는 역할 수행.
+        return 값이 있는 함수
+
+        3. reduce
+        배열 반복할 때 그 값을 이용해서 특정값을 도출하거나 재가공할 때 사용
+        return 값이 있는 함수
+
+
+    </pre>
+
+    <pre>
+        [표현법]
+        
+        1. forEach
+        배열명.forEach(function(item, index) {
+
+            반복적으로 실행할 코드;
+        });
+
+        ★ 2. map ★
+        let 배열 = 배열명.map(function(item, index) {
+
+            반복적으로 실행할 코드;
+
+            return 리턴할값;
+        });
+
+        3. reduce
+        let 변수 = 배열명.reducce(function(acc, item, index) {
+
+            반복적으로 실행할 코드
+
+            return 다음반복회차의acc값;
+        });
+
+    </pre>
+
+    <button onclick="arrayFunctionTest();">확인하기6</button>
+
+    <div id="area6"></div>
+
+    <script>
+        const arrayFunctionTest = () => {
+
+            var area6 = document.getElementById("area6");
+
+            // forEach 함수
+            // 배열에 단순 반복을 돌리기 위한 용도
+            let arr1 = ['hi', 'hello', '안녕', 11, true];
+
+            // for 또는 for in문 사용 가능하지만
+            arr1.forEach((item, index) => {
+
+                // console.log(item, index); // arr[], length
+
+                area6.innerHTML += `${index}: ${item} <br>`;
+            });
+
+            area6.innerHTML += '<hr>';
+
+            // map 함수
+            // 배열 반복 + 새로운배열 생성
+            let arr2 = arr1.map((item, index) => {
+
+                // onsole.log(item, index);
+
+                // area6에 반복출력
+                // area6.innerHTML += `${index}: ${item} <br>`;
+
+                // ★ return 값과 최종리턴값의 관계 ★
+                // return `${index}: ${item}`;
+                // 반복 0, 1, 2, ...회차 때 리턴되는 값이 리턴결과인 arr2 배열에 차곡 담김
+
+                return `${index} : ${item} <br>`;
+            });
+
+            // console.log(arr2);
+            area6.innerHTML += arr2.join('');
+
+            area6.innerHTML += '<hr>';
+
+            // reduce 함수
+            // 배열 반복돌리기 + 새로운 값을 계산하는 용도
+            let arr3 = [1, 2, 3, 4, 5, 6];
+
+            let result = arr3.reduce(function(acc, item, index) {
+
+                // console.log('?'); // 5번 호출
+                // 0번 인덱스에 대해서는 반복을 수행하지 않음(1번부터 시작)
+                // console.log(item, index);
+
+                // console.log(acc);
+                // 1, 0, 0, 0, 0
+
+                // return 0;
+                // 매번 리턴되는 값이 다음 반복회차의 acc로 넘어옴
+                // 첫 번째 반복회차에서는 반복 돌리는 배열의 0번 인덱스값이 acc로 넘어오게 됨
+                // 마지막 반복회차의 리턴값이 최종리턴값으로 됨
+
+                return acc + item;
+                // 배열 누적합
+            });
+
+            // console.log(result);
+            // 누적합 21
+
+            // map 함수의 경우 리액트에서 많이 씀
+            // 실제 리액트 라이브러리 예시
+            let liList = arr2.map((item, list) => {
+
+                let liEl = '<li>' + item + '</li>';
+
+                    return liEl;
+            });
+            // arr2 배열의 내용무ㅠㄹ들을 li 요소로 감싸주고, 촤ㅣ종적으로 배열에 넣어서 리턴
+
+            // console.log(liList);
+
+            let resultStr = '<ul>';
+
+            for(let i = 0; i < liList.length; i++) {
+
+                resultStr += liList[i];
+
+            }
+
+            resultStr += '</ul>';
+            console.log(resultStr);
+
+            area6.innerHTML += resultStr;
+        };
+
+    </script>
+</body>
+</html>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>

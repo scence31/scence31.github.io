@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01_my_first_project</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!--
+      * index.html 파일
+      - 텅 빈 div 요소 하나랑 main.jsx 파일의 코드를 가져오겠다고 하는
+      script 태그 하나만을 갖고있는 파일
+      - script 태그가 없으면 단순 흰 도화지 느낌임
+      - script 태그에서 가리키고 있는 곳의 자바스크립트 구문을 실행하여 그림그려주는 컨셉
+
+
+      * 리액트 라이브러리 동작원리
+      1. 이 리액트 프로젝트를 동작하는 순간 index.html 페이지가 제일 먼저 로딩됨
+      2. index.html 내에 있는 script 태그로 main.jsx 파일의 자바스크립트 구문이 실행됨
+      3. id가 root인 div를 선택해서 그 안에 그림을 그려주는 코드가 실행됨.
+      4. 이 때, App,jsx 파일의 App 함수를 호출함
+      5. App 함수에서 리턴하는 태그들이(화면을 그려주는) 리턴되면서 root 안에 그림이 그려짐
+
+      - App.jsx 파일에서 페이지 관련 작업하면 됨
+
+    -->
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

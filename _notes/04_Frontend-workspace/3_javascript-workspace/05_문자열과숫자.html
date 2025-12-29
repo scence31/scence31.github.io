@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문자열과 숫자</title>
+    <style>
+        /* 필기용 스타일 먼저 지정*/
+        .area {
+            width: 300px;
+            border: 1px solid red;
+        }
+        .small {
+            height: 250px;
+        }
+        .big {
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>* 문자열과 숫자</h1>
+
+    <h3>1. 문자열 관련 메소드</h3>
+
+    <button onclick="showStringMethod();">문자열 처리 메소드</button>
+
+    <div id="area1" class="area big"></div>
+
+    <script>
+        function showStringMethod() {
+
+            // 테스트용 문자열 변수세팅
+            var str1 = "Hello World";
+
+            // 출력할 div 요소 객체 가져오기
+            let area1 = document.getElementById("area1");
+
+            area1.innerHTML = "str1: " + str1 + "<br>";
+            area1.innerHTML += "toUpperCase(): " + str1.toUpperCase() + "<br>";
+            area1.innerHTML += "toLowerCase(): " + str1.toLowerCase() + "<br>";
+            area1.innerHTML += "문자열의 길이: " + str1.length + "<br>";
+            // 자바에서는 .length() 였는데 스크립트는 .leghth임 메소드 아님
+
+            // 문자열 길이만큼 반복돌릴기
+            for(let i = 0; i < str1.length; i++) {
+
+                area1.innerHTML += i + "번째 인덱스: " + str1.charAt(i) + "<br>";
+            }
+
+            area1.innerHTML += "앞에서부터 첫 l의 위치: " + str1.indexOf("l") + "<br>";
+            area1.innerHTML += "뒤에서부터 첫 l의 위치: " + str1.lastIndexOf("l") + "<br>";
+            // 오라클의 INSTR 함수 비슷, 자바도 indexOf, lastIndexOf 메소드 있음
+
+            area1.innerHTML += "앞에서부터 첫 a의 위치: " + str1.indexOf("a") + "<br>";
+            // indexOf, lastIndexOf는 찾으려는 문자 없으면 -1로 출력(자바도 같음)
+
+            area1.innerHTML += "sunstring(6부터 시작인덱스): " + str1.substring(6) + "<br>";
+            area1.innerHTML += "sunstring(시작인덱스, 끝인덱스): " + str1.substring(0, 2) + "<br>";
+            // 시작인데스에서 끝인덱스 -1까지 추출( 똑같음)
+
+            var str2 = "사과,바나나,복숭아,키위";
+
+            let fruits = str2.split(",");
+            // ["사과", "바나나", "복숭아", "키위"]
+
+            area1.innerHTML += "fruits: " + fruits + "<br>";
+
+            for(var i =0; i < fruits.length; i++) {
+
+                area1.innerHTML += fruits[i] + "<br>";
+            }
+
+            area1.innerHTML += "fruits의 자료형: " + typeof(fruits);
+        }
+    </script>
+
+    <br><hr>
+
+    <h3>2. 숫자(수학)관련 메소드</h3>
+
+    <button onclick="showMathMethod();">수학관련 메소드</button>
+
+    <div id="area2" class="area small"></div>
+
+    <script>
+        function showMathMethod() {
+
+            // 출력할 div 요소
+            var area2 = document.getElementById("area2");
+
+            // Math라는 자바스크립트 내장 객체에서 제공하는 메소드들
+            area2.innerHTML = "절대값: " + Math.abs(-123) + "<br>";
+            area2.innerHTML += "랜덤값: " + Math.random() + "<br>";
+            // 자바와 동일
+
+            // Math.round(123.567) 반올림
+            // Math.floor(123.456) 버림
+            // .ceil(123.001) 올림
+            // 위치조절 X 무조건 소숫점 기준으로 동작
+
+            // .sqrt(4) 제곱근
+        }
+    </script>
+
+    <br><hr>
+
+    <h3>3. 문자열과 숫자간의 산술연산(형변환 개념)</h3>
+
+    <button onclick="arithmathic();">산술연산</button>
+
+    <div id="area3" class="area big"></div>
+
+    <script>
+        function arithmathic() {
+
+            // 출력용 div 가져오기
+            let area3 = document.getElementById("area3");
+
+            // 자동형변환 예시
+            // 덧셈
+            var test1 =  7+7; // 14
+            var test2 = 7+"7"; // "77"
+            var test3 = "7"+7; // "77"
+            var test4 = "7"+7+7; // "777"
+            var test5 = "7"+(7+7); // "714"
+
+            area3.innerHTML = "test1: " + test1 + "<br>";
+            area3.innerHTML += "test2: " + test2 + "<br>";
+            area3.innerHTML += "test3: " + test3 + "<br>";
+            area3.innerHTML += "test4: " + test4 + "<br>";
+            area3.innerHTML += "test5 " + test5 + "<br>";
+            // 덧셈의 경우 숫자가 문자열로 자동형변환됨
+
+            // 그 외의 산술연산도 가능
+            let test6 = "7" * 7; // 49
+            let test7 = "7" - 7; // 0
+            let test8 = "7" / 7; // 1
+            let test9 = "7" % 7; /// 0
+
+            area3.innerHTML += "test6: " + test6 + "<br>";
+            area3.innerHTML += "test7: " + test7 + "<br>";
+            area3.innerHTML += "test8: " + test8 + "<br>";
+            area3.innerHTML += "test9: " + test9 + "<br>";
+            // 덧셈 제외하면 문자열이 숫자로 자동형변환됨
+
+            // * 문자열이 숫자로 형변환될 때 주의사항!!
+            let test10 = "2a가3" - 7;
+
+            area3.innerHTML += "test10: " + test10 + "<br>";
+            // NaN: Not a Number의 약자(숫자 형식이 아님)
+            // 문자열이 숫자로 형변환될 때 항상 문자열 내부에 숫자형식만 존재해야함
+
+            // isNan(판단할값);
+            // NaN 이면 true or false
+            area3.innerHTML += "isNaN(test10): " + isNaN(test10) + "<br>";
+
+            //강제형변환
+            // 형변환 연산자가 아닌, 형변환 함수 이용!
+
+            // 문자열 -> 숫자
+            // Number(문자열);
+            // parseInt(문자열);
+            // parseFloat(문자열;
+            var iNum = 2; // 숫자
+            var sNum = "3"; // 문자열
+
+            var test11 = iNum + sNum; // 2 + "3" = "23"
+            var test12 = iNum + Number(sNum); // 5
+            var test13 = iNum + parseInt(sNum);
+            var test14 = iNum + parseFloat(sNum);
+
+            area3.innerHTML += "test11: " + test11 + "<br>";
+            area3.innerHTML += "test12: " + test12 + "<br>";
+            area3.innerHTML += "test13: " + test13 + "<br>";
+            area3.innerHTML += "test14: " + test14 + "<br>";
+
+            // 마찬가지로 NaN 주의해야함
+            area3.innerHTML += "Number('abc'): " + Number("abc") + "<br>";
+
+            // Number, parseInt, parseFloat 함수의 차이점은?
+            let fNum = "1.234"; // 문자열
+
+            let test15 = iNum + fNum; // 2 + "1.234" = "21.234"
+            let test16 = iNum + Number(fNum); // 3.234 진짜
+            let test17 = iNum + parseInt(fNum); // 3 소숫점 버림
+            let test18 = iNum + parseFloat(fNum); // 3.234
+
+            area3.innerHTML += "test15: " + test15 + "<br>";
+            area3.innerHTML += "test16: " + test16 + "<br>";
+            area3.innerHTML += "test17: " + test17 + "<br>";
+            area3.innerHTML += "test18: " + test18 + "<br>";
+            // Number는 기존 숫자 그대로 형변환
+            // parseInt는 정수형으로(소숫점 절삭)
+            // parseFoloat는 실수형으로
+
+            // 숫자를 문자열로
+            // String(숫자);
+            var a = 1;
+            var b = 2;
+
+            var test19 = String(a) + String(b); // 12
+        }
+    </script>
+
+    <br><hr>
+
+    <!-- 연습문제 1. 정수 입력받고 합을 구하고 label(#result) 안에 출력-->
+
+    <h3>덧셈계산기</h3>
+
+    정수1: <input type="number" id="num1"> <br>
+    정수2: <input type="number" id="num2"> <br>
+
+    <!-- * input 타입을 number로 해도 .value로 끌고오면 문자열됨-->
+
+    <button onclick="plus();">덧셈</button>
+
+    <br><br>
+
+    <label id="result"></label>
+    
+    <script>
+        function plus() {
+
+            var num1 = document.getElementById("num1").value;
+            var num2 = document.getElementById("num2").value;
+
+            var sum = Number(num1) + Number(num2);
+            
+            // console.log(sum);
+
+            document.getElementById("result").innerText = sum;
+
+        }
+    </script>
+</body>
+</html>
+
+<br><br><br><br><br><br><br><br><br><br><br>

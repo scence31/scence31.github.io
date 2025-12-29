@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardMapper">
+
+	<!-- 한 mapper 파일 내에 resultMap 을 여러개 둘 수 있다!! -->
+	
+	<!-- REPLY 테이블 조회결과 Reply VO 객체 가공 resultMap -->
+	<resultMap id="replyResultSet" type="reply">
+		<id column="REPLY_NO" property="replyNo" />
+		<result column="REPLY_CONTENT" property="replyContent" />
+		<result column="USER_ID" property="replyWriter" />
+		<result column="CREATE_DATE" property="createDate" />
+	</resultMap>
+	
+	<!-- 
+		ATTACHMENT 테이블로부터 조회된 결과를
+		자바의 Attachment VO 객체로 가공해주는 resultMap
+	-->
+	<resultMap id="attachmentResultSet" type="attachment">
+		<id column="FILE_NO" property="fileNo" />
+		<result column="ORIGIN_NAME" property="originName" />
+		<result column="CHANGE_NAME" property="changeName" />
+		<result column="FILE_PATH" property="filePath" />
+	</resultMap>
+	
+	<!-- 
+		CATEGORY 테이블로부터 조회된 결과를
+		자바의 Category VO 객체로 가공해주는 resultMap
+	-->
+	<resultMap id="categoryResultSet" type="Category">
+		<id column="CATEGORY_NO" property="categoryNo" />
+		<result column="CATEGORY_NAME" property="categoryName" />
+	</resultMap>
+
+	<!-- 
+		BOARD 테이블로부터 조회된 결과를
+		자바의 Board VO 객체로 가공해주는 resultMap
+	-->
+	<resultMap id="boardResultSet" type="board">
+		<id column="BOARD_NO" property="boardNo" />
+		<result column="CATEGORY" property="category" />
+		<!-- 만약 SELECT 절에 별칭을 이용했다면 COLUMN 속성에 그 별칭을 적으면 됨!! -->
+		<result column="BOARD_TITLE" property="boardTitle" />
+		<result column="USER_ID" property="boardWriter" />
+		<result column="COUNT" property="count" />
+		<result column="CREATE_DATE" property="createDate" />
+		
+		<result column="BOARD_CONTENT" property="boardContent" />
+		
+		<!-- 썸네일 파일명에 대한 맵핑정보 -->
+		<result column="TITLEIMG" property="titleImg" />
+	</resultMap>
+	
+	<!-- 게시글의 총 갯수를 구하는 쿼리문 -->
+	<!-- 
+		resultType="_int" 
+		: 해당 SELECT 문으로 조회된 ResultSet 의 결과값을 자바의 int 타입으로 넘겨주겠다.	
+	-->
+	<select id="selectListCount" resultType="_int">
+		SELECT COUNT(*)
+		  FROM BOARD
+		 WHERE STATUS = 'Y'
+		   AND BOARD_TYPE = 1
+	</select>
+	
+	<!-- 게시글 목록 조회용 쿼리문 -->
+	<select id="selectBoardList" parameterType="hashmap" 
+								 resultMap="boardResultSet">
+	<!-- RowBounds 객체 사용 전 : 인라인뷰 매우 복잡 -->
+	<!--  
+		SELECT *
+		  FROM
+		    (
+		        SELECT ROWNUM RNUM, A.*
+		          FROM
+		            (
+		                SELECT BOARD_NO
+		                     , CATEGORY_NAME AS "CATEGORY"
+		                     , BOARD_TITLE
+		                     , USER_ID
+		                     , COUNT
+		                     , CREATE_DATE
+		                  FROM BOARD B
+		                  JOIN CATEGORY USING (CATEGORY_NO)
+		                  JOIN MEMBER ON (BOARD_WRITER = USER_NO)
+		                 WHERE B.STATUS = 'Y'
+		                   AND BOARD_TYPE = 1
+		                 ORDER BY BOARD_NO DESC
+		            ) A
+		    )
+		 WHERE RNUM BETWEEN #{startRow} AND #{endRow}
+	-->
+	
+	<!-- RowBounds 객체 사용 후 : 인라인뷰 안써도 됨 (기존 쿼리문의 가장 안쪽 쿼리문만 갖고옴) -->
+		SELECT BOARD_NO
+	         , CATEGORY_NAME AS "CATEGORY"
+	         , BOARD_TITLE
+	         , USER_ID
+	         , COUNT
+	         , CREATE_DATE
+	      FROM BOARD B
+	      JOIN CATEGORY USING (CATEGORY_NO)
+	      JOIN MEMBER ON (BOARD_WRITER = USER_NO)
+	     WHERE B.STATUS = 'Y'
+	       AND BOARD_TYPE = 1
+	     ORDER BY BOARD_NO DESC
+	<!-- 모든 게시글을 단순히 최신순으로 정렬해서 조회해주는 쿼리문만 작성!! -->
+	</select>
+	
+	<!-- 
+		* 검색 기능 구현
+		
+		- 마이바티스를 이용하지 않고 순수 JDBC 를 이용해서 검색 기능을 구현할 경우
+		  검색 조건에 따른 쿼리문들을 각각 만들어 줘야만 한다!!
+		- 마이바티스 프레임워크를 이용하면 각각의 쿼리문들을 하나의 쿼리문으로 합쳐서 작성 가능!!  
+		
+		* MyBatis 의 "동적 SQL (동적 쿼리)" 기술을 이용한 검색 기능 구현
+		
+		- 동적 SQL (동적 쿼리)
+		  : 상황에 따라 분기 처리 등을 통해 SQL 문을 동적으로 만드는 것
+		    즉, 상황에 따라 매번 다른 쿼리문이 만들어 지는 것!!
+		  예) 조건에 따라 다른 쿼리문을 매번 만들겠다.
+		      만약에 전달받은 HashMap 의 condition 키값에 대한 밸류가 "writer" 라면?
+		      												   "title" 라면?
+		      												   "content" 라면?
+		   문법은 JSTL 의 태그들과 거의 비슷한 형태임!!  
+	-->
+	
+	<!-- 게시글 검색 시, 검색된 게시글의 갯수를 구하는 쿼리문 -->
+	<select id="selectSearchCount" parameterType="hashmap" resultType="_int">
+		SELECT COUNT(*)
+		  FROM BOARD B
+		  JOIN MEMBER ON (BOARD_WRITER = USER_NO)
+		 WHERE BOARD_TYPE = 1
+		   AND B.STATUS = 'Y'
+		   AND
+		   <if test="condition == 'writer'">
+		   		USER_ID
+		   </if>
+		   <if test="condition == 'title'">
+		   		BOARD_TITLE
+		   </if>
+		   <if test="condition == 'content'">
+		   		BOARD_CONTENT
+		   </if>
+		   					  LIKE '%' || #{keyword} || '%'
+	</select>
+
+	<!-- 게시글 검색용 쿼리문 -->
+	<select id="searchBoardList" parameterType="hashmap" resultMap="boardResultSet">
+		SELECT BOARD_NO
+		     , CATEGORY_NAME AS "CATEGORY"
+		     , BOARD_TITLE
+		     , USER_ID
+		     , COUNT
+		     , CREATE_DATE
+		  FROM BOARD B
+		  JOIN CATEGORY USING (CATEGORY_NO)
+		  JOIN MEMBER ON (BOARD_WRITER = USER_NO)
+		 WHERE BOARD_TYPE = 1
+		   AND B.STATUS = 'Y'
+		   AND 
+		 <choose>
+		 	<when test="condition == 'writer'">
+		 		USER_ID
+		 	</when>
+		 	<when test="condition == 'title'">
+		 		BOARD_TITLE
+		 	</when>
+		 	<otherwise>
+		 		BOARD_CONTENT
+		 	</otherwise>
+		 </choose>
+		  					  LIKE '%' || #{keyword} || '%'
+		 ORDER BY BOARD_NO DESC
+	</select>
+
+	<!-- 일반게시글 추가용 쿼리문 -->
+	<insert id="insertBoard" parameterType="board">
+		INSERT INTO BOARD(BOARD_NO
+		                , BOARD_TYPE
+		                , CATEGORY_NO
+		                , BOARD_TITLE
+		                , BOARD_CONTENT
+		                , BOARD_WRITER)
+		           VALUES(SEQ_BNO.NEXTVAL
+		                , 1
+		                , #{category}
+		                , #{boardTitle}
+		                , #{boardContent}
+		                , #{boardWriter})
+	</insert>
+	
+	<!-- 첨부파일 등록용 쿼리문 -->
+	<insert id="insertAttachment" parameterType="attachment">
+		INSERT INTO ATTACHMENT(FILE_NO
+		                     , REF_BNO
+		                     , ORIGIN_NAME
+		                     , CHANGE_NAME
+		                     , FILE_PATH)
+		                VALUES(SEQ_FNO.NEXTVAL
+		                     , SEQ_BNO.CURRVAL
+		                     , #{originName}
+		                     , #{changeName}
+		                     , #{filePath})
+	</insert>
+
+	<!-- 카테고리 정보 조회용 쿼리문 -->
+	<select id="selectCategoryList" resultMap="categoryResultSet">
+		SELECT * 
+		  FROM CATEGORY
+		 ORDER BY CATEGORY_NO ASC
+	</select>
+	
+	<!-- 일반게시글 조회수 증가용 쿼리문 -->
+	<update id="increaseCount" parameterType="_int">
+		UPDATE BOARD
+		   SET COUNT = COUNT + 1
+		 WHERE BOARD_NO = #{bno}
+		   AND STATUS = 'Y'
+	</update>
+	
+	<!-- 일반게시글 상세조회용 쿼리문 -->
+	<select id="selectBoard" parameterType="_int" resultMap="boardResultSet">
+		<!--  
+			INNER JOIN : 두 연결고리 컬럼에 대해 일치하는 값들만 찾아서 조회하겠다.
+			OUTER JOIN : 두 연결고리 컬럼에 대해 일치하는 값들을 찾고,
+						 기준점이 되는 (왼편, 오른편, 양쪽편) 테이블로부터
+						 누락없이 한번 더 조회해주겠다.
+			OUTER JOIN 을 이용해서 쿼리문을 재활용함!!
+			기존에는 사진게시글에 CATEGORY_NO 컬럼값이 NULL 이였음!!
+			- 이걸 그냥 INNER JOIN 을 해버리게 되면 CATEGORY 테이블의 CATEGORY_NO 컬럼값 중
+			  NULL 인 컬럼값이 존재하지 않기 때문에 사진게시글이 조회가 안되던 거였음!!
+			- OUTER JOIN 으로 바꿨고, 이 때 기준점을 BOARD 테이블로 잡아줬더니
+			  CATEGORY_NO 컬럼값 중 NULL 이 있더라도 BOARD 테이블의 데이터는 누락이 없어야 하기 때문에
+			  제대로 사진 게시글의 데이터도 잘 조회가 되는 것임!!
+		-->
+		SELECT BOARD_NO
+		     , CATEGORY_NAME AS "CATEGORY"
+		     , BOARD_TITLE
+		     , BOARD_CONTENT
+		     , USER_ID
+		     , CREATE_DATE
+		  FROM BOARD B
+		  LEFT JOIN CATEGORY USING (CATEGORY_NO)
+		  JOIN MEMBER ON (BOARD_WRITER = USER_NO)
+		 WHERE BOARD_NO = #{bno}
+		   AND B.STATUS = 'Y'
+	</select>
+	
+	<!-- 첨부파일 상세조회용 쿼리문 - 일반게시글, 사진게시글 다 쓸 수 있음!! -->
+	<select id="selectAttachment" parameterType="_int" 
+								  resultMap="attachmentResultSet">
+		SELECT FILE_NO
+		     , ORIGIN_NAME
+		     , CHANGE_NAME
+		     , FILE_PATH
+		  FROM ATTACHMENT
+		 WHERE REF_BNO = #{bno}
+		 ORDER BY FILE_NO ASC
+		 <!-- 나름 보완을 한다면 대표이미지가 제일 먼저 조회되게끔 정렬 -->
+	</select>
+	
+	<!-- 일반게시글 수정용 쿼리문 -->
+	<update id="updateBoard" parameterType="board">
+		UPDATE BOARD
+		   SET CATEGORY_NO = #{category}
+		     , BOARD_TITLE = #{boardTitle}
+		     , BOARD_CONTENT = #{boardContent}
+		 WHERE BOARD_NO = #{boardNo}
+		   AND STATUS = 'Y'
+	</update>
+	
+	<!-- 일반게시글 첨부파일 수정용 쿼리문 1 -->
+	<update id="updateAttachment" parameterType="attachment">
+		UPDATE ATTACHMENT
+		   SET ORIGIN_NAME = #{originName}
+		     , CHANGE_NAME = #{changeName}
+		     , UPLOAD_DATE = SYSDATE
+		 WHERE FILE_NO = #{fileNo}
+	</update>
+
+	<!-- 일반게시글 첨부파일 수정용 쿼리문 2 -->
+	<insert id="insertNewAttachment" parameterType="attachment">
+		INSERT INTO ATTACHMENT(FILE_NO
+		                     , REF_BNO
+		                     , ORIGIN_NAME
+		                     , CHANGE_NAME
+		                     , FILE_PATH)
+		                VALUES(SEQ_FNO.NEXTVAL
+		                     , #{refBno}
+		                     , #{originName}
+		                     , #{changeName}
+		                     , #{filePath})
+	</insert>
+	
+	<!-- 일반게시글 삭제용 쿼리문 -->
+	<update id="deleteBoard" parameterType="_int">
+		UPDATE BOARD
+		   SET STATUS = 'N'
+		 WHERE BOARD_NO = #{bno}
+		   AND STATUS = 'Y'
+	</update>
+	
+	<!-- 사진게시글 작성용 쿼리문 -->
+	<insert id="insertThumbnailBoard" parameterType="board">
+		INSERT INTO BOARD(BOARD_NO
+		                , BOARD_TYPE
+		                , BOARD_TITLE
+		                , BOARD_CONTENT
+		                , BOARD_WRITER)
+		           VALUES(SEQ_BNO.NEXTVAL
+		                , 2
+		                , #{boardTitle}
+		                , #{boardContent}
+		                , #{boardWriter})
+	</insert>
+	
+	<!-- 사진게시글 첨부파일 등록용 쿼리문 -->
+	<insert id="insertAttachmentList" parameterType="attachment">
+		INSERT INTO ATTACHMENT(FILE_NO
+		                     , REF_BNO
+		                     , ORIGIN_NAME
+		                     , CHANGE_NAME
+		                     , FILE_PATH
+		                     , FILE_LEVEL)
+		                VALUES(SEQ_FNO.NEXTVAL
+		                     , SEQ_BNO.CURRVAL
+		                     , #{originName}
+		                     , #{changeName}
+		                     , #{filePath}
+		                     , #{fileLevel})
+	</insert>
+	
+	<!-- 사진게시글 목록 조회용 쿼리문 -->
+	<select id="selectThumbnailList" resultMap="boardResultSet">
+		SELECT BOARD_NO
+		     , BOARD_TITLE
+		     , COUNT
+		     , FILE_PATH || CHANGE_NAME "TITLEIMG"
+		  FROM BOARD B
+		  JOIN ATTACHMENT ON (BOARD_NO = REF_BNO)
+		 WHERE BOARD_TYPE = 2
+		   AND B.STATUS = 'Y'
+		   AND FILE_LEVEL = 1
+		 ORDER BY BOARD_NO DESC
+	</select>
+	
+	<!-- 댓글뮥록조회용 쿼리문 -->
+	<select id="ajaxSelectReplyList" parameterType="_int" resultMap="replyResultSet">
+		SELECT REPLY_NO, REPLY_CONTENT, USER_ID, TO_CHAR(CREATE_DATE, 'YY/MM/DD HH:MI:SS') "CREATE_DATE"
+		  FROM REPLY R
+		  JOIN MEMBER ON (REPLY_WRITER = USER_NO)
+		 WHERE REF_BNO = #{bno}
+		    AND R. STATUS='Y'
+		 ORDER BY REPLY_NO DESC
+	</select>
+	
+	<!-- 댓글 추가용 쿼리문 -->
+	<insert id="ajaxInsertReply" parameterType="reply">
+		INSERT INTO REPLY(REPLY_NO, REPLY_CONTENT, REF_BNO, REPLY_WRITER)
+                    VALUE(SEQ_RNO.NEXTVAL, #{replyContent}, #{refBno}, #{replyWriter})
+	
+	</insert>
+	
+</mapper>
+
+
+
+

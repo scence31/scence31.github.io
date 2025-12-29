@@ -1,0 +1,31 @@
+#btn2 {
+    width: 150px;
+    height: 60px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    border: 0px;
+    cursor: pointer;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
+.blue {
+    background-color: blue;
+}
+
+.navy {
+    background-color: navy;
+}
+
+.orange {
+    background-color: orange;
+}
+.purple {
+    background-color: purple;
+}

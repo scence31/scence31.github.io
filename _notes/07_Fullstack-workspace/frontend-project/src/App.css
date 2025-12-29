@@ -1,0 +1,45 @@
+/* 내용 영역을 나타내는 content 영역 */
+.content {
+    width: 1000px;
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    height: 500px;
+}
+
+/* 공통스타일 위주로 기술 */
+/* 목록조회용 테이블 스타일 */
+.list-area {
+    margin:auto;
+    width: 90%;
+
+}
+
+.list-area>tbody>tr:hover {
+    cursor: pointer;
+}
+
+/* 폼 형식용 테이블 스타일 */
+.form {
+    width: 60%;
+    margin: auto;
+    box-sizing: border-box;
+}
+
+.form input, .form textarea {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.form textarea {
+    resize: none;
+    height: 300px;
+
+}
+
+.form input[type=radio] {
+    width: 15px;
+    margin: 15px;
+}
+

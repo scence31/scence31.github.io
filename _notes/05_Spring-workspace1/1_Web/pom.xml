@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
+	<!--
+		* pom.xml 파일
+		
+		- Spring 프로젝트의 라이브러리(jsr 파일) 관리하고 베포정보 관리.
+		Maven 프레임워크의 핵심설정파일
+	-->
+		
+	<!-- 1. 스프링부트 버전 정보를 기술 -->
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.6</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	
+	<!-- 프로젝트 생성할 때의 설정값들이 적혀있는 부분 -->
+	<groupId>com.kh</groupId> <!-- 2번째 레벨까지 패키지명 (도메인주소 역순) -->
+	<artifactId>web</artifactId> <!-- 3번째 레벨까지 패키지명 (프로젝트이름) -->
+	<version>0.0.1-SNAPSHOT</version> <!-- 나중에 배포될 때 버전명 -->
+	<name>1_Web</name> <!-- 프로젝트명 -->
+	<description>Demo project for Spring Boot</description> <!-- 프로젝트 설명 -->
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	
+	<!-- 이 파일에서 사용할 설정값들 담아둠.(변수설정부분, 태그명이 곧 변수명이 됨) -->
+	<properties>
+		<java.version>21</java.version>
+	</properties>
+	
+	<!-- 핵심부분, 외부 라이브러리들(.jar 파일) 여따 적으면 댐, 수동으로 다운도 가능 -->
+	<!-- 
+		첨에 등록했던 라이브러리들
+		1. Spring Boot DevTools : 스프링 기본설정 관련 라이브러리
+		2. Spring Web : 스프링으로 MVC패턴을 구현하기 위한 라이브러리
+	-->
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- jsp 파일을 사용하기 위한 라이브러리 추가 -->
+		<dependency>
+		    <groupId>org.apache.tomcat.embed</groupId>
+		    <artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+		
+	</dependencies>
+
+	<!-- 배포할 때 필요한 설정들이 담긴 부분-->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

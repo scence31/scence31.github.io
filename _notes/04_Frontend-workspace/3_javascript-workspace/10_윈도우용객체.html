@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>window용 객체</title>
+    <style>
+        .area {
+            width: 300px;
+            height: 150px;
+            font-size: 13px;
+            border: 1px solid black;
+        }
+        .small {
+            height: 100px;
+            background-color: lightgray;
+        }
+        .big {
+            height: 300px;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>* window용 객체(브라우저 창과 관련된 개념들)</h1>
+
+    <!--
+        * 자바스크립트는 별도의 컴파일과정 없이 인터프리터방식으로 실행됨
+
+        - 자바처럼 코드를 실행해주는 JDK 개념이 없음
+        - 단순히 html 파일 내 자바스크립트 구문을 짜고 브라우저로 열면 실행할 수 있음
+        - 즉, 자바스크립트 코드를 실행해주는 주체는 브라우저임
+        
+        - 요즘은 브라우저 창 없이 자바스크립트 코드 실행 가능
+        -> node.js 기술(리액트 파트) JVM 또는 JDK, JRE 같은 느낌
+    -->
+
+    <p>
+        - window 객체는 자바스크립트의 최상위 내장객체로, <br>
+        하위 속성(자식)으로 크게 BOM/DOM 계열로 나눌 수 있음
+        
+        <br><br>
+
+        1. BOM(Browser Object Model) <br>
+        : 브라우저 창과 관련된 하위 속성객체들 <br>
+        ex) location 객체, screen, navigator, history 객체 등.. <br>
+
+
+        2. DOM(Document Object Model) <br>
+        : html 문서와 관련된 하위 속성객체들 <br>
+        ex) document 객체
+    </p>
+
+    <br><hr>
+
+    <h3>window 객체</h3>
+
+    <p>
+        - 브라우저 창 하나를 통으로 나타내는 객체 <br>
+        - 창 하나가 열릴 때마다 내부적으로 생성
+    </p>
+
+    <pre>
+        즉, 브라우저 창이 하나 열릴 때마다 내부적으로
+        var window = {
+            alert: function() {},
+            confirm: function() {},
+            console: {
+                log: function() {},
+                dir: function() {},
+                ...
+            },
+            document: {},
+            history: {},
+            location: {},
+
+            속성명: 속성값 ...
+        }
+        
+        -> 객체생성구문이 실행됨
+    </pre>
+
+    <br><hr>
+
+    <h4>window 객체에서 제공하는 유용한 메소드 속성들</h4>
+    <!-- alery, confirm, prompt 등 말고-->
+    
+    <h4>- window.open("url", "창이름", "창의특성")</h4>
+
+    <button onclick="test1();">네이버</button>
+
+    <script>
+        function test1() {
+
+            // window.open(); 인자값 생략시 비어있는 새 창이 열림
+
+            /*
+                - 첫 번째 인자값: url주소(창에서 열고자 하는)
+                - 두 번째 : 창이름(같은 이름의 창이 열려있으면 또 열리지 않고 새로고침됨)
+                - 세 번째 : 창특성(창의 너비, 높이, 스크롤바, 상태표시줄 등 옵션부여)
+            */
+
+            // window.open("http://www.naver.com", "ㅋㅋㅋ");
+            
+            /*
+                * 창의 특성으로 기술할 수 있는 옵션들
+
+                => px
+                width: 창의 너비
+                height: 높이
+
+                => yes / no
+                resizable: 창크기 조절가능 여부
+                location: 주소창이 보일 것인지 / 수정가능할 것인지
+                menubar: 메뉴바가 보일 것인지
+                scrollbars: 스크롤바가 보일 것인지
+                status: 상태표시줄이 보일 것인지
+                toollbar: 도구모음을 보일 것인지
+
+                여려 속성을 한번에 지정하고 싶으면 콤마로 나열
+                ("속성명=값, 속섬명=값, ...")
+            */
+
+            window.open("http://www.naver.com", "zzz", 
+                        "width=500, height=600, resizable=no, location=yes, menubar=yes, scrollbars=no, status=yes, toolbar=yes")
+
+            // width height 제외 적용이 안댐
+            // 크롬브라우저에서는 대부분 속성들이 적용 안댐(보안상 표준)
+            // IE는 과거에 모든 속성들이 다 적용되었음(표준 안지킴)
+
+
+        }
+    </script>
+
+    <br><hr>
+
+    <h4>- window.setTimeout(함수, ms);</h4>
+
+    <button onclick="test2();">실행확인</button>
+
+    <script>
+        function test2() {
+
+            /*
+            window.setTimeout(function() {
+
+                alert("ㅎㅇㅎㅇ");
+            }, 3000);
+             3초 후에 함수 실행되는 메소드
+            */
+
+            let newWindow = window.open();
+            // window.open()은 새 창 열고, window 객체를 리턴하는 것까지 역할
+
+            newWindow.alert("3초 후에 이 페이지는 닫힙니다.");
+            // > 새로 열린 창에 alert 띄어줌
+            // alert 메소드는 사용자가 확인버튼 누르기 전까지 무한대기임
+
+            window.setTimeout(function() {
+
+                newWindow.close();
+                // 새로 열린 창을 닫아줌
+
+            }, 3000);
+            // setTimeout: 함수를 한 번만 실행해줌
+        }
+    </script>
+
+    <br><hr>
+
+    <h4>- window.setInterval(함수, ms)</h4>
+
+    <button onclick="test3();">실행확인</button>
+
+    <div id="area1" class="area"></div>
+
+    <script>
+        function test3() {
+
+            var area1 = document.getElementById("area1");
+            /*
+            window.setInterval(function() {
+
+                area1.innerHTML += 'ㅋ';
+            }, 300);
+            // 0.3초마다 ㅋ 출력 => 인터벌 그대로
+
+            let count = 1;
+
+            window.setInterval(function() {
+
+                area1.innerHTML = count++;
+                // count++;
+            }, 1000);
+            // 1초마다 카운트업
+            */
+
+            //======================================
+            // Date 내장객체와 setInterval 메소드 활용하면
+            // 디지털시계 기능 구현 가능
+            window.setInterval(function() {
+
+                // 1초마다 현재 시간의 시, 분, 초 매 번 추출하여
+                // div에 출력
+
+                // 1. 현재 날짜 및 시간 가져오기
+                let now = new Date();
+
+                // 2. 시, 분, 초 추출
+                let hour = now.getHours();
+                let min = now.getMinutes();
+                let sec = now.getSeconds();
+
+                // console.log(hour, min, sec);
+
+                // 3. 출력하기 전 고려사항
+                // 14시 -> 오후 2시
+                // 1시 -> 01시 / 1분 -> 01분 희망
+
+                // 오전 오후 여부를 가르는 변수
+                let ampm = "AM";
+
+                if(hour >= 12) { // 오후부터
+
+                    ampm = "PM";
+                }
+                
+                if(hour > 12) { // 13시부터
+
+                    hour = hour - 12; // 14시 - 12 => 2시
+                }
+
+                // 1자리수 숫자 앞에 0 붙여주기
+                if(hour < 10) {
+
+                    hour = "0" + hour; // "00" ~ "09"
+                }
+
+                if(min < 10) {
+
+                    min = "0" + min;
+                }
+
+                if(sec < 10) {
+
+                    sec = '0' + sec;
+                }
+ 
+                // console.log(ampm, hour, min, sec);
+
+                area1.innerHTML = ampm + "<br>";
+                area1.innerHTML += hour + ":" + min + ":" + sec;
+
+            }, 1000);
+
+            // setInterval: 내가 지정한 시간 간격마다 매번 함수 실행
+        }
+    </script>
+
+    <br><hr>
+
+    <h1>* BOM(Browser Object Model)</h1>
+
+    <!--
+        수많은 window의 자식객체 중 브라우저 창과 관련된 객체들
+
+        ex) loacation, screen, navigator, history
+    -->
+
+    <h3>- location 객체</h3>
+
+    <p>
+        브라우저의 주소창과 관련된 객체
+    </p>
+
+    <button onclick="console.log(location);">실행확인</button>
+
+    <br><br>
+
+    <a href="http://www.naver.com">네이버로 이동</a>
+    <!--
+        a 요소는 애초에 클릭시 요청할 url주소를 작성할 수 있는 href 속성을 제공함
+        
+        - 동작원리: a요소 클릭시 href 속성에 담긴 url주소를
+        브라우저 주소창에 그대로 입력해서 페이지를 이동시키는 것
+    -->
+
+    <br><br>
+
+    <button href="http://www.naver.com">네이버로 이동</button>
+    <!-- href는 a요소에만 적용 가능함-->
+
+    <br><br>
+
+    <!--굳이 a태그 아니어도 클릭시 url 이동하고 싶음-->
+
+    <button onclick="location.href = 'http://www.naver.com';">네이버로 이동</button>
+    <!-- location 객체의 href속성: 현재 이 브라우저 주소창에 담긴 문자열 가리키는 속성
+        - 이 속성에 내가 원하는 값을 대입해서 페이지 이동할 수 있음
+    -->
+
+    <br><br>
+
+    <!-- location 객체의 유용한 메소드속성: assign, replace, reload -->
+
+    <button onclick="location.assign('http://www.google.com');">구글로 이동</button>
+    <!-- location 객체의 assign 속성: 매개변수 인자로 전달된 url 주소값을 받아서
+     내부적으로 location.href 속성에 대입해주는 메소드속성(setter역할 비슷)
+     -->
+    
+    <br><br>
+    
+    <button onclick="location.replace('http://www.google.com')">구글로 이동</button>
+    <!-- replace 속성: 매개변수 인자로 전달된 url주소로 이동(뒤로가기 불가능)-->
+
+    <br><br>
+    
+    <!-- location 객체 이용해서 주로 페이지 이동할 수 있고, 기능 만들 수 있음-->
+
+    <button onclick="location.href = location.href;">새로고침</button>
+    <!-- location.reload(); 같은 역할-->
+
+    <h3>- screen 객체</h3>
+
+    <!--
+        현재 이 브라우저를 띄우고 있는 모니터에 대한 화면 해상도 관련 정보를 나타내는 객체
+        - 이 브라우저를 어느 모니터에서 띄우냐에 따라 매번 screen 객체에 담긴 정보도 다르게 나옴
+        - 주로 퍼블리셔들이 함, 호환성 체크
+    -->
+
+    <button onclick="console.log(screen);">screen 객체 확인</button>
+
+    <br><hr>
+
+    <h3>- navigator 객체</h3>
+    <!-- 브라우저 프로그램에 대한 전반적 정보를 담고있는 객체. 퍼블리셔. 호환성-->
+     <button onclick="console.log(navigator);">navigator 객체 확인</button>
+
+    <br><hr>
+
+    <h3>- history 객체</h3>
+    <!-- 페이지 방문(열람) 이력. 뒤로가기 기능 만들 수 있음(history.back();)-->
+    <button onclick="console.log(history);">history 객체 확인</button>
+
+    <br><hr>
+
+    <h1>* DOM(Document Object Model)</h1>
+
+    <p>
+        - DOM은 document 객체를 나타냄 <br>
+        - document 객체는 html 문서 하나 당 가지고 있는 내장객체 <br>
+        즉, document 객체는 html 문서 하나를 나타냄 <br>
+
+        - document 또한 많은 하위속성(자식) 갖고있음 <br>
+        <br>
+
+        * HTML에 있는 각각의 태그들을 노드 node라고 함 <br>
+        - 요소노드(element node): 태그 그 자체(시작/종료 각각) <br>
+        - 텍스트노드(text node): 태그 내에 기록되는 텍스트 <br>
+
+        <br>
+
+        * HTML 요소들은 크게 두 분류로 나눌 수 있음 <br>
+        - 텍스트노드가 존재하는 요소 <br>
+        : 시작/종료태그가 한쌍으로 이뤄진 것 ex) p, div 등<br>
+
+        - 없는 요소 <br>
+    </p>
+
+    <!-- ★★★★★ DOM 파트에서 공부할 내용
+        
+        - html 문서 상에 없던 html 요소들을 자바스크립트 구문을 이용해서 만들 수 있다
+        - 반대로 있던 html 요소 삭제 가능
+    -->
+
+    <h3>- 노드 생성과 관련된 메소드(document 객체에서 제공)</h3>
+
+    <h4>1. 텍스트노드가 존재하는 요소 생성(시작+종료태그)</h4>
+
+    <button onclick="test4();">실행확인</button>
+
+    <div id="area2" class="small"></div>
+
+    <script>
+        function test4() {
+
+            // <h3>안녕하세요</h3> 요소를 자바스크립트 구문으로 생성
+            // id가 area2인 div 요소 안쪽에 배치하고 싶음
+
+            // * 기존 html 문서 상에 없던 요소를 자바스크립트 구문으로 생성
+            // => 동적으로 요소를 생성한다.
+
+            // 동적으로 요소 만드는법 1.
+            // 문자열로 생성
+            // document.getElementById("area2").innerHTML = "<h3>안녕하세요<h3>";
+
+            // 동적으로 요소 만드는법 2.
+            // > document 객체(DOM)에서 제공하는 메소드를 통해 요소객체로 만드는 방법
+
+            // 1단계)
+            // 요소노드(elementNode) 생성
+            // => document.createElement("태그명");
+            var elementNode = document.createElement('h3'); // <h3></h3>
+
+            // console.log(elementNode); // 요소객체(object) 타입
+
+            // 2단계)
+            // 텍스트노드 생성하기
+            // => document.createTextNode("문구");
+            var textNode = document.createTextNode("안녕하세요");
+
+            // console.log(textNode); // 객체타입
+
+            // 3단계) 
+            // 요소노드 + 텍스트노드 결합
+            // 요소노드의 하위 자식으로 텍스트노드 추가하기
+            // > 요소노드명.appendChild(텍스트노드명);
+            elementNode.appendChild(textNode); // <h3>안녕하세요</h3>
+
+            // console.log(elementNode);
+
+            // 만들어진 elementNode를 div 안쪽에 출력하기!
+            // document.getElementById("area2").innerHTML = elementNode/*.toString()*/;
+            // 결과 => [object HTMLHeadingElement] 
+            // innerHTML 속성은 반드시 문자열 형태로 넣어야 함(elementNode는 객체형태)
+
+            // div 요소 안에 요소객체로서 h3태그 넣고싶으면
+            // appendChild 메소드 사용해서 요소 연결해야 함
+            document.getElementById("area2").appendChild(elementNode);
+
+        }
+    </script>
+    
+    <br><hr>
+
+    <h4>2. 텍스트노드가 존재하지 않는 요소 생성(시작태그만 있음)</h4>
+
+    <button onclick="test5();">실행확인</button>
+
+    <div id="area3" class="big"></div>
+
+    <script>
+        function test5() {
+
+            // area3 내부에 <img> 요소 객체를 생성해서 출력해보기
+
+            // 방법1. 문자열로 생성
+            // document.getElementById("area3").innerHTML = "<img src='~'>"
+
+            // 방법2. 요소객체로 생성
+            // 1단계)
+            // 요소노드 생성
+            let img = document.createElement('img'); // <img> 객체타입
+
+            // let img = {} 대충 이런느낌
+
+            // img요소 객체에 필요한 속성들 추가
+            // 객체에 속성을 추가할 때 객체명.속성명 = 값;
+            img.src = "https://kh-academy.co.kr/resources/images/main/logo.svg";
+            img.width = '200';
+            img.height = '100';
+
+            // 이 시점 기준으로 속성들 추가됨.
+            // console.log(img);
+
+            // 최종으로 div 안에 자식으로 연결해서 출력하기
+            document.getElementById("area3").appendChild(img);
+        }
+    </script>
+
+    <br><hr>
+
+    <h4>3. 요소 삭제</h4>
+
+    <button onclick="test6();">삭제</button>
+
+    <script>
+        function test6() {
+
+            // 지우고자하는요소객체.remover();
+
+            // id가 area3인 요소객체의 첫 번째 자식 지우기
+            document.getElementById("area3").firstChild.remove();
+            // 마지막 자식은 lastChild.remove();
+        }
+    </script>
+
+    <!--
+        * 자바스크립트 구문으로 동적으로 요소 만들기
+        - document 객체에서 제공하는 메소드로 요소 만들기
+
+        - 자바스크립트의 대표적인 라이브러리( 또는 프레임워크)
+        1. React
+        2. Vue
+        => 동작원리: html 태그로 화면 만들지 않고,
+        자바스크립트 구문으로 화면 만듦(전부)
+
+
+        
+    -->
+
+
+
+</body>
+</html>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <br><br><br><br><br>

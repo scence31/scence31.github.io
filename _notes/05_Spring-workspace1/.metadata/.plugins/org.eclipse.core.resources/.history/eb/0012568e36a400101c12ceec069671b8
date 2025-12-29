@@ -1,0 +1,417 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page import="java.util.ArrayList, com.kh.action.model.vo.Person" %>
+<%--
+	- 이 페이지 내에서 코어라이브러리 이용하고 싶다면 선언해야됨
+	- 구문 걍 통으로 외우기, 페이지마다 써야함
+ --%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+	<h1>* JSTL Core Library</h1>
+	
+	<br><hr>
+	
+	<h3>1. 변수 관련 태그들(Servlet Scope 내장객체와 관련된 태그들)</h3>
+	
+	<pre>
+		* 변수선언(Servlet Scope 내장객체에 키+밸류 세트로 값을 담는 태그)
+		
+		- 변수를 선언하고 초기값을 대입해주는 기능을 제공
+		- 즉, Servlet Scope 내장객체에 키(변수명) + 밸류(변수값) 세트로 담는 기능
+		- 어느 Scope 내장 객체에 어떤 키값으로 담을지 지정해서 명시해야 함
+		
+		[표현법]
+		
+		&lt;c:set var="키값(변수명)" value="밸류값" scope="스코프영역지정(생략가능)"&gt;
+		
+	</pre>
+	
+	<!-- 연동 안하면 Unknown Tag 오류 발생 -->
+	
+	<c:set var="num1" value="10" /> <!-- pageScope에 담김 -->
+	<!-- 내부적으로 pageContext.setAttribute("num1", 10); 구문 실행됨 -->
+	
+	<c:set var="num2" value="20" scope="request" /> <!-- requestScope에 담김 -->
+	<!-- 내부적으로 request.setAttribute("num2", 20); 실행됨 -->
+	
+	<br>
+	
+	num1 변수값 : ${ pageScope.num1 } <br>
+	num2 변수값 : ${ requestScope.num2 } <br>
+	
+	<c:set var="result" value="${ num1 + num2 }" scope="session" /> <!-- sessionScope 담김 -->
+	<!-- 내부적으로 ~ -->
+	
+	<br>
+	
+	result 변수값 : ${ sessionScope.result } <br>
+	
+	<br><br>
+	
+	<!-- value 속성을 쓰지 않고, 시작태그와 종료태그 사이에 값 직접 넣기 -->
+	<c:set var="result" scope="request">9999</c:set>
+	
+	request 의 result : ${ requestScope.result } <br>
+	
+	<br><hr>
+	
+	<pre>
+		* 변수 삭제(Servlet Scope 내장객체로부터 키값을 제시해서 키+밸류 세트로 지워내는 태그)
+		
+		- 해당 변수를 Scope 객체에서 찾아서 제거하는 태그
+		- 즉, 해당 Scope 내장객체로부터 키값을 제시해서 키+밸류 세트로 데이터 제거
+		- 어느 Scope 내장객체로부터 어느 키값을 가진 데이터를 지울것인지 지정해서 명시
+		
+		[표현법]
+		
+		&lt;c:remove var="제거할키값 (변수명)" scope="스코프영역지정 (생략가능)"&gt;
+		
+		내부적으로 해당 Scope 내장 객체에 xxx.removeAttribute("키값"); 구문을 실행하는 태그
+		scope 속성은 생략 가능하나,
+		생략 시 모든 scope 영역에서 해당 키 + 밸류를 다 찾아서 일일이 삭제해줌!!
+	</pre>
+	
+	삭제전 result : ${ result } <br> <!-- 9999 -->
+	
+	<br>
+	
+	1) 특정 scope 지정해서 삭제 <br>
+	
+	<c:remove var="result" scope="request" />
+	<!-- 내부적으로 request.removeAttribute("result"); 구문 실행됨 -->
+	
+	request로부터 삭제 후 result : ${ result } <br> <!-- 9999 vs 30 -->
+	
+	<br>
+	
+	2) 특정 Scope 영역을 지정하지 않고 삭제 <br>
+	
+	<c:remove var="result" />
+	<!-- 
+		내부적으로 아래 구문이 실행됨
+		pageContext.removeAttribute("result");
+		request.removeAttribute("result");
+		session.removeAttribute("result");
+		application.removeAttribute("result");
+		
+		=> scope 지정없이 제거하면 다지움
+	 -->
+	 
+	 최종 삭제 후 result : ${ result } <br> <!-- 아무 것도 출력되지 않음 -->
+	 
+	 <br><hr>
+	 
+	 <pre>
+	 	* 변수 출력
+	 	- EL 구문 만으로 출력 가능하지만 EL 구문에 부가적인 기타옵션을 줘서 출력하게 도와주는 태그임
+	 	
+	 	[표현법]
+	 	
+	 	&lt;c:out value="" default="" escapeXml="" &gt;
+	 	
+	 	value 속성 : 출력할 변수명을 EL 형식으로 적음
+	 	default 속성 : 출력할 변수에 값이 없을 경우 기본값으로 대체해서 출력할 내용을 정의함(생략가능)
+	 	escapeXml 속성 : 출력할 내용에 html 태그가 텍스트로 포함되어 있으면 해석해서 보일지 말지 여부 지정(생략가능)
+	 	true : 태그로 해석 안함(기본값), false : 태그로 해석함
+	 </pre>
+	 
+	 result 변수값 : ${ result } <br> <!-- 아무 것도 출력 안댐 -->
+	 result 변수값 : <c:out value="${ result }" /> <br> <!-- 아무 것도 출력 안댐 -->
+	 default 설정한 result 변수값 : <c:out value="${ result }" default="없음" />
+	 
+	 <br>
+	 
+	 <!-- escapeXml 테스트 -->
+	 <c:set var="outTest" value="<mark>출력테스트</mark>" />
+	 
+	 outTest 변수값 : ${ outTest } <br> <!-- 태그로 해석돼서 보임 -->
+	 outTest 변수값 : <c:out value=" ${ outTest }" /> <br> <!-- 태그가 텍스트로 보임 -->
+	 escapleXml 설정한 outTest 변수값 : <c:out value="${ outTest }" escapeXml="true" />	
+	 <!-- escapeXml 속성 생략시 기본값이 true: 태그를 텍스트로 출력 -->
+	 
+	 <br>
+	 escapleXml 설정한 outTest 변수값 : <c:out value="${ outTest }" escapeXml="false" />
+	 <!-- false 하면 태그 해석 -->
+	 
+	 <br><hr>
+	 
+	 <h3>2. 조건문 -if</h3>
+	 
+	 <pre>
+	 	- Java 언어의 단독 if문 역할을 해주는 태그
+	 	- 단, 조건식은 test 속성에 작성하되, EL 구문 형식으로 작성해야만 함!
+	 	
+	 	<%--
+	 		[표현법]
+	 		
+	 		<c:if test="${ 조건식 }">
+	 			조건식 결과가 true일 경우 실행할 구문
+	 		</c:if>
+	 	 --%>
+	 </pre>
+	 <!-- 위에서 선언한 num1, num2 로 테스트 -->
+	 <c:if test="${ num1 gt num2 }"> <!-- false 인 조건 -->
+		<b>num1 이 num2 보다 더 큽니다.</b>
+	 </c:if>
+		
+	 <c:if test="${ num1 le num2 }"> <!-- true 인 조건 -->
+		<b>num1 이 num2 보다 작거나 같습니다.</b>
+	 </c:if>
+	 
+	 <br>
+	 
+	 <c:set var="str" value="안녕하세요" />
+	 
+	 <c:if test="${ str eq '안녕하세요'}">
+	 	<b>Hello World!</b>
+	 </c:if>
+	 
+	 <c:if test="${ str ne '안녕하세요' }">
+	 	<b>Goodbye World!</b>
+	 </c:if>
+	 
+	 <br><hr>
+	 
+	 <h3>3. 조건문 - choose, when, otherwise</h3>
+	 
+	 <pre>
+	 	- Java의 if-else, if-else if문 또는 switch문과 비슷한 역할을 함
+	 	- 즉 한번에 여러 개의 경우의 수를 조건으로 따질 수 있는 태그들
+	 	
+	 	- 각 경우의 수 조건들을 모두 choose 태그로 묶고, 각 조건을 when 태그로 작성, 이도저도 아니면(else, default) otherwise
+	 	
+	 	<%--
+	 	
+	 		[표현법]
+	 		
+	 		<c:choose>
+	 			<c:when test="${ 조건식1 }>
+	 				조건식 1의 결과가 true일 경우 실행할 코드
+	 			</c:when>
+	 			<c:when test="${ 조건식2 }>
+	 				조건식 2의 결과가 true일 경우 실행할 코드
+	 			</c:when>
+	 			...
+	 			
+	 			<c:otherwise>
+	 				위 조건들이 모두 false일 경우 실행할 코드(= else)
+	 			</c:otherwise>
+	 		</c:choose>
+	 
+	 	 --%>
+	 </pre>
+	 
+	 <c:choose>
+	 	<c:when test="${ num1 eq 20 }">
+	 		<b>처음 뵙겠습니다.</b>
+	 	</c:when>
+	 	<c:when test="${ num1 eq 10 }">
+	 		<b>다시 봬서 반갑습니다.</b>
+	 	</c:when>
+	 	<c:otherwise>
+	 		<b>안녕하세요.</b>
+	 	</c:otherwise>
+	 </c:choose>
+	 
+	 <%--
+	 	조건문 예시)
+	 	로그인 기능 구현: 아이디, 비번 => MEMBER 테이블로부터 SELECT => SELECT 한 회원 정보를 sessionScope에 담을 예정
+	 	
+	 	sessionScope에 "loginUser"라는 키값으로 Member 객체가 밸류로 들어가있다고 가정
+	  --%>
+	  
+	  <br><hr>
+	  
+	  <h3>4. 반복문 - foreEach</h3>
+	  
+	  <pre>
+	  	- Java 반복문(for / 향상 for) 해당하는 태그
+	  	- 속성들을 어떻게 작성하냐에 따라서 일반 for, 향상된 for 사용 가능
+		
+		<%--
+			[표현법]
+			
+			1. 일반 for문
+			<c:forEach var="변수명" begin="시작수" end="끝수(포함)" step="증가시킬값(생략가능)">
+				반복적으로 실행할 구문
+			</c:forEach>
+		
+			2. 향상된 for문
+			<c:forEach var="변수명" items="순차적으로접근할배열명 or 리스트명" >
+				반복적으로 실행할 구문
+			</c:forEach>
+		
+		 --%>
+	  </pre>
+	  
+	  <!-- for 문 -->
+	  <c:forEach var="i" begin="1" end="10" step="1">
+	  		반복확인 : ${ i } <br>
+	  </c:forEach>
+	  
+	  <br>
+	  
+	  <!--  EL 구문은 태그 안에서도 사용 가능 -->
+	  <c:forEach var="i" begin="1" end="6">
+	  		<h${ i }>태그 안에서도 사용 가능</h${ i }>
+	  </c:forEach>
+	  
+	  <!-- 향상된 for -->
+	  <c:set var="colors">
+	  	red, yellow, green, pink
+	  </c:set>
+	  
+	  colors 값 : ${ colors } <br>
+	  
+	  <br>
+	  
+	  <ul>
+	  	  <c:forEach var="c" items="${ colors }">
+	  	  	   <li style="color : ${ c };">${ c }</li>
+	  	  </c:forEach>
+	  
+	  </ul>
+	  
+	  <!-- 응용예시 -->
+	  
+	<%
+	  	// 회원 목록조회 기능 구현
+	  	// DB로부터 조회해서 응답데이터로 회원들의 정보들을 받아왔다고 가정
+	  	ArrayList<Person> list = new ArrayList<>();
+		list.add(new Person("홍길동", 20, "남자"));
+		list.add(new Person("김말순", 30, "여자"));
+		list.add(new Person("박말똥", 40, "여자"));
+		
+		// 응답데이터는 보통의 경우 대부분 request에 담겨오므로
+		request.setAttribute("list", list);
+		// 여기까지는 원래 컨트롤러에서 해야 하는 코드임.
+	
+	%>
+	
+	<table border="1">
+		<thead>
+			<tr>
+				<th>순번</th>
+				<th>이름</th>
+				<th>나이</th>
+				<th>성별</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:choose>
+				<c:when test="${ empty list }">
+					<tr>
+						<th colsapn="4">조회된 회원목록이 없습니다.</th>
+					</tr>
+				</c:when>
+				<c:otherwise>
+					<c:forEach var="p" items="${ requestScope.list }" varStatus="status">
+						<tr>
+							<th>${ status.count }</th>
+							<!-- varStatus는 보조해주는 변수를 세팅할 수 있음
+								향상된 for문에는 인덱스 개념이 없음.
+								근데 .count .index 통해서 순번 가능 -->
+							<th>${ p.name }</th>
+							<th>${ p.age }</th>
+							<th>${ p.gender }</th>
+						</tr>
+					</c:forEach>
+				</c:otherwise>
+			</c:choose>
+		</tbody>
+	</table>
+	
+	<br><hr>
+	
+	<h3>5. 반복문 - forTokens</h3>
+	
+	<pre>
+		- 구분자를 통해서 분리된 각각의 문자열에 순차적으로 접근하면서 반복을 수행
+		- Java의 split("구분자") 또는 StrikngTokenizer와 비슷한 역할
+		
+		<%--
+			[표현법]
+			
+			<c:forTokens var="각값을보관할변수명" items="분리할문자열" delims="구분자">
+				반복적으로 실행할 구문
+			</c:forTokens>
+		 --%>
+	</pre>
+	
+	<c:set var="device" value="컴퓨터,휴대폰,TV,에어컨/냉장고.세탁기" />
+	
+	<ul>
+		<c:forTokens var="d" items="${ device }" delims=",/.">
+			<li>${ d }</li>
+		</c:forTokens>
+	</ul>
+	<!-- delims 구분자는 하나라도 만나면 끊김 -->
+	
+	<br><hr>
+	
+	<h3>6. 쿼리스트링 관련 - url, param</h3>
+	
+	<pre>
+		- url 경로를 생성하고 쿼리스트링을 정의할 수 있는 태그
+		- 넘겨야 할 쿼리스트링이 길 경우 사용하면 편함
+		
+		<%--
+			[표현법]
+			
+			<c:url var="변수명" value="요청할url주소">
+				<c:param name="키값" value="밸류값" />
+				<c:param name="키값" value="밸류값" />
+				<c:param name="키값" value="밸류값" />
+				...
+			</c:url>
+			
+			- 내부적으로 "요청할url주소?키값=밸류값&키값=밸류값&키값 ...";
+		--%>
+	</pre>
+	
+	<!-- 기존방식 -->
+	<a href="/action/list?cuurentPage=1&num=2&keyword=a">기존의 방식</a>
+	<!-- href에 url 주소 기술시 뒤에 쿼리스트링을 직접 기술해도 됨 -->
+	
+	<br>
+	
+	<!-- c:url, param 이용한 방식 -->
+	<c:url var="link" value="/list">
+		<c:param name="currentPage" value="1" />
+		<c:param name="num" value="2" />
+		<c:param name="keyword" value="a" />
+	</c:url>
+	
+	<a href="${ link }">c:url, param 태그를 이용한 방식</a>
+	 
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

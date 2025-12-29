@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자바스크립트 추가 문법1</title>
+    <style>
+        div {
+            width: 400px;
+            border: 1px solid black;
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+
+    <!--
+        * ES6 (ECMAScript6) - 2015년 신설
+
+        - 기존의 자바스크립트 문법(ES5 버전)을 표준화하기 위해 나온 문법
+        - Reack or Vue 등 자바스크립트 주요 라이브러리들도 ES6에 맞게 문법이 지정되어있음
+        
+        * 수업시간에 다룰 문법들
+        0. let, const - var 불편함 해소
+
+        1. 화살표함수(arrow function)
+
+        2. 백틱기호
+
+        3. 전개연산자
+
+        4. 클래스
+
+        5. 객체확장표현식
+
+        ★6. 구조분해할당
+
+        ★7. 배열관련함수(순회함수)
+
+        ★8. 라이브러리 의존성 관리
+    -->
+
+    <h1>ES6의 추가적인 문법 1</h1>
+
+    <h3>* 화살표함수</h3>
+
+    <p>
+        - Arrow function (= Lambda) <br>
+        - 기존의 익명함수를 더 간결하게 표현하기 위해 나온 문법
+    </p>
+
+    <pre>
+        [표현법]
+
+        - 기존문법
+        변수명 = function(매개변수) {
+
+            실행할구문;
+        };
+
+        - 화살표함수 문법
+        변수명 = (매개변수) => {
+
+            실행할구문;
+        };
+    </pre>
+
+    <!--
+        - 기존의 문법과 비교
+
+        - 기존
+        function() {실행할구문}
+        function(a) {실행할구문}
+
+        function(a, b) {실행할구문}
+        function(a, b) {return a + b;}
+
+        - 화살표
+        () => {실행할구문}
+        (a) => {실행할구문} or a => {실행할구문}
+
+        (a, b) => {실행할구문}
+        (a, b) => a + b
+
+        # 매개변수가 한 개일 경우 () 생략 가능함.
+        # 실행할 구문이 리턴구문 한 줄뿐이라면 중괄호와 리턴 키워드 생략가능
+    -->
+
+    <br><hr>
+
+    <h3>* 백틱기호</h3>
+
+    <p>
+        ` (backtick) <br>
+        
+        - 기존의 쌍따옴표 작은따옴표가 아닌 `` 사용해서 문자열 템플릿 형식으로 지정하는 문법 <br>
+        - 단순 문자열을 표현할 수도 있지만 주로 문자열템플릿을 지정한느 용도로 쓸 수 있음 <br>
+        (자바의 printf 구문과 유사함) <br>
+        - 단, ${변수명} 때문에 .html 파일 형식에서만 사용 가능함. .jsp파일에 불가능함(EL 구문과 문법이 겹침)
+    </p>
+
+    <pre>
+        [표현법]
+
+        `${name} 님의 나이는 ${age}살 입니다.`
+
+        - 백틱기호 안에 문자열 포맷 지정하고 ${변수명}으로 구멍 메꾸면 됨
+    </pre>
+
+    <br>
+
+    <button onclick="backtickTest();">확인하기1</button>
+
+    <div id="area1"></div>
+    
+    <script>
+        // function backtickTest() {실행할구문}
+
+        // 선언적함수는 익명함수로도 표현 가능함
+        // 변수명이 곧 함수명이 되도록 유도
+
+        /*
+        const backtickTest = function() {
+
+            console.log("잘 호출되나?");
+        };
+        */
+
+        // 화살표함수로
+        const backtickTest = () => {
+
+            // console.log('잘 호출되나');
+
+            // area1 요소 객체 변수에 담기
+            var area1 = document.getElementById("area1");
+
+            // 기존 방식
+            let str1 = '안녕하세요';
+            let str2 = '반갑습니다.';
+
+            let str3 = str1 + str2; // 안녕하세요 + 반갑습니다
+
+            area1.innerHTML = "str1: " + str1 + "<br>";
+            area1.innerHTML += "str2: " + str2 + "<br>";
+            area1.innerHTML += "str3: " + str3 + "<br>";
+
+            // 백틱기호 이용(문자열템플릿)
+            let str4 = `${str1}${str2}`;
+            area1.innerHTML += 'str4: ' + str4 + '<br>';
+
+            area1.innerHTML += "<hr>";
+
+            // 기존
+            let product  = {
+
+                name : "삼성노트북",
+                price : "120,000원"
+            };
+
+            // "제품 xx 가격은 xxxx원입니다."" 형식으로 출력
+
+            // 기존
+            let productInfo1 = "제품 " + product.name + "의 가격은 " + product.price + "입니다.";
+
+            area1.innerHTML += "productInfo1: " + productInfo1 + "<br>";
+
+            // 백틱
+            let productInfo2 = `제품 ${product.name}의 가격은 ${product.price}입니다.`;
+
+            area1.innerHTML += "productInfo2: " + productInfo2 + "<br>";
+
+            area1.innerHTML += `productInfo2: ${productInfo2}`;
+            // 속성값 대입되어도 사용 가능
+
+            let num1 = 10;
+            let num2 = 20;
+
+            // 기존
+            area1.innerHTML += "num1 + num2 = " + (num1 + num2) + "<br>"; 
+            area1.innerHTML += "num1 * num2 = " + (num1 * num2) + "<br>";
+
+            // 백틱
+            area1.innerHTML += `num1 + num2 = ${num1+num2} <br>`;
+            area1.innerHTML += `num1 * num2 = ${num1*num2} <br>`;
+            // ${} 안에는 연산식, 함수 호출식 등도 사용 가능함
+        };
+    </script>
+
+    <br><hr>
+
+    <h3>* 전개연산자</h3>
+
+    <p>
+        - 배열의 요소나 객체의 속성들을(데이터들을) 쭉 나열해주는 연사자 <br>
+        - 배열이나 객체의 깊은복사 개념이 들어가는 원리임. <br>
+        - 전개연산자를 잘 이용하면 여러 개의 배열이나 객체를 병합하는데 쓸 수 있음
+    </p>
+
+    <br>
+    
+    <button onclick="spreadTest();">확인하기2</button>
+
+    <div id="area2"></div>
+
+    <script>
+        const spreadTest = () => {
+
+            // area2를 요소객체에 담기
+            var area2 = document.getElementById("area2");
+
+            // 배열
+            // 기존방식
+            let origin1 = [1, 2, 3, 4, 5];
+            let copy1 = [];
+
+            // origin1 배열의 내용을 copy1 베열에 깊은복사하기
+            // for문 이용
+            for(let i = 0; i < origin1.length; i++) {
+
+                copy1[i] = origin1[i];
+            }
+
+            area2.innerHTML = "origin1: " + origin1 + '<br>';
+            area2.innerHTML += "copy1: " + copy1 + "<br>";
+
+            // 전개연산자 이용방식
+            let copy2 = [...origin1];
+            area2.innerHTML += "copy2: " + copy2 + "<br>";
+
+            // 깊은복사 됐는지 확인 => 잘 됨
+            copy2[2] = 99;
+            area2.innerHTML += "copy2: " + copy2 + "<br>";
+
+            // 배열의 병합
+            let array1 = ["one", "two"];
+            let array2 = ["three", "four"];
+
+            let combined1 = [array1[0], array1[1], array2[0], array2[1]];
+
+            area2.innerHTML += "array1: " + array1 + "<br>";
+            area2.innerHTML += "array2: " + array2 + "<br>";
+            area2.innerHTML += "combined1: " + combined1 + "<br>";
+
+            // concat 함수
+            let concat = array1.concat(array2);
+            area2.innerHTML += "concat: " + concat + "<br>";
+
+            // 전개연산자
+            let combined2 = [...array1, ...array2];
+            area2.innerHTML += "combined2: " + combined2 + "<br>" + "<hr>";
+
+            // 객체
+            // 기존
+            let origin3 = {
+
+                name: "홍길동",
+                age: 20
+            };
+
+            let copy3 = {};
+
+            // 자바스크립트 객체도 반복문 가능 for in문(인덱스개념 없어서)
+            for(let key in origin3) {
+
+                copy3[key] = origin3[key];
+            }
+
+            area2.innerHTML += 'origin3: ' + origin3 + "<br>";
+            // [object object]
+
+            console.log(origin3);
+            console.log(copy3);
+
+            // 전개연산자
+            let copy4 = {...origin3};
+            console.log(copy4);
+
+            // 객체 병합
+            let obj1 = {
+
+                one: 1,
+                two: 2
+            };
+
+            let obj2 = {three: 3, four: 4};
+
+            // 기존
+            let combined3 = {one: obj1.one, two: obj1.two, three: obhj2.three, four: obj2.four};
+            console.log(combined3);
+
+            // 전개연산자
+            let combined4 = {...obj1, ...obj2};
+            console.log(combined4);
+
+            // 전개연산자는 항상 깊은복사 개념이 깔려있음.
+        }
+    </script>
+
+    <br><hr>
+
+    <h3>* 클래스</h3>
+
+    <p>
+        - 기존 ES5 생성자함수 대신 자바처럼 클래스를 정의해서 쓸 수 있음
+    </p>
+
+    <pre>
+        [표현법]
+
+        - 기존의 생성자함수 문법
+        function 함수명(매개변수) {
+
+            // this 객체가 하나 생성된 꼴
+
+            // 일반속성 정의(자바 필드부)
+            this.속성명 = 매개변수;
+
+            // 메소드속성 정의(자바 메소드부)
+            this.속성명 = () => {};
+
+            // return this; // 묵시적으로 셍략
+        }
+
+
+        - 클래스문법
+        class 클래스명 {
+
+            // 생성자
+            constructor(매개변수) {
+
+                // 일반속성 정의
+                this.속성명 = 매개변수;
+
+                // 메소드속성 정의 - 2번방법(야매)
+                this.메소드속성명 = function() {};
+            }
+
+            // 메소드속성 정의 - 1번방법(정석)
+            메소드명() {} // 선언적 함수로 정의
+
+        }
+    </pre>
+
+    <br>
+
+    <button onclick="classTest();">확인하기3</button>
+
+    <div id="area3"></div>
+
+    <script>
+        // 확인하기 버튼클릭시 실행할 함수
+        const classTest = () => {
+
+            let area3 = document.getElementById('area3');
+
+            // 객체생성
+            // const p1 = {name: '홍길동', age: 20};
+            // const p2 = {name: '김말똥', age: 35};
+            // 번거로움
+
+            // => 생성자함수 사용
+            /*
+            function Person(name, age) {
+
+                // this 객체가 생성되었다고 가정 후
+
+                // 일반속성 정의
+                this.name = name;
+                this.age = age;
+
+                // 메소드속성 정의
+                this.toString = () => {
+
+                    // return this.name + '님은' + this.age + '살 입니다.';
+                    return `${this.name}님은 ${this.age}살 입니다.`;
+                };
+
+                // return this; 생략
+            }
+
+            const p1 = new Person('홍길동', 20);
+            const p2 = new Person('김말똥', 35);
+
+            area3.innerHTML = "p1: " + p1 + "<br>";
+            area3.innerHTML += "p2: " + p2.toString() + '<br>';
+            */
+
+            // 클래스 형태로 생성자함수 대체
+            class Person {
+
+                constructor(name, age) {
+
+                    // 일반속성 정의
+                    this.name = name;
+                    this.age = age;
+                }
+
+                // 메소드속성 정의
+                toString() {
+
+                    return `${this.name}님은 ${this.age}살 입니다.`;
+                }
+                
+            }
+            const p1 = new Person('홍길동', 20);
+            const p2 = new Person('김말똥', 35);
+
+            area3.innerHTML = "p1: " + p1 + "<br>";
+            area3.innerHTML += "p2: " + p2.toString() + '<br>';
+        };
+
+    </script>
+</body>
+</html>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>

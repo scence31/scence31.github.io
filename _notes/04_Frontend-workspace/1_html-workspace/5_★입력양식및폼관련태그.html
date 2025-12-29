@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>입력양식 및 폼관련 태그</title>
+</head>
+<body>
+    <br><br>
+
+    아이디: <input type="text"> <br>
+    비밀번호: <input type="password"> <br>
+    성별: 남<input type="radio">여<input type="radio"> <br>
+    <button type="submit">회원가입</button>
+    <button type="reset">초기화</button>
+    <input type="submit" value="회원가입">
+
+    <p> 입력용 태그들은 항상 form태그로 감싸줘야함. 서브밋은 폼 태그당 한 개. <br>
+        서브밋 하면 컨트롤러로 넘기면서 요청함</p>
+
+        <!-- 
+            <form action="값 보낼 경로(어느 컨트롤러로)" method="get(url노출)/post">
+
+                input~
+            </form>
+        -->
+
+        <form action="test" method="get">
+
+            검색: <input type="text" name="keyword">
+            <button type="submit">검색</button>
+            <input type="submit" value="검색">
+        </form>
+
+        <p> fieldset / legend: 그룹 테두리 생성 / 테두리 제목 <br>
+            폼 안에 생성해야 함</p>
+
+        <form action="test" method="get">
+
+                <fieldset>
+                    <legend>로그인</legend>
+
+                    <label for="userId">아이디:</label>
+                    <input type="text" name="id" id="userId" maxlength="12" required> <br>
+
+                    <label for="userPwd">비밀번호:</label>
+                    <input type="text" name="pwd" id="userPwd" placeholder="영어,문자,특수문자 8~15" required> <br>
+
+                    <label for="userEmail">이메일: </label>
+                    <input type="email" name="email" id="userEmail" required>
+                    <select name="com">
+                        <option value="na">@naver.com</option>
+                        <option value="gm">@gmail.com</option>
+                        <option value="ha">@hanmail.net</option>
+                        <option selected>직접입력</option>
+                    </select> <br>
+
+                    <button type="submit" style="cursor: pointer;">확인</button>
+                </fieldset>
+
+                <!-- 
+                    * datalist
+
+                    - 기존 sekect option과 비슷, 근데 직접 압력해도 할 수 있게.
+                    <input type="text" name="color" list="colorlist">
+
+                    <datalist id="colorlist">
+                        <option value="black">검정색</option>
+                    </datelist>
+                -->
+        </form>
+    
+</body>
+</html>

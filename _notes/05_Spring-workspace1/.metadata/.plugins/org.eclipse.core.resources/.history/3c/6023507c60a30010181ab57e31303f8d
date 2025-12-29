@@ -1,0 +1,149 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="com.kh.action.model.vo.Person" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	
+	<h1>* EL 기본구문</h1>
+	
+	<h3>
+		1. 기존 방식대로 스크립틀릿과 표현식 이용해서 화면에 출력
+	</h3>
+	<%--
+	<%
+		// requestScope에 담긴 값 뽑기 - 2개
+		String classRoom = (String)request.getAttribute("classRoom");
+		Person student = (Person)request.getAttribute("student");
+		
+		// sessionScope에 담긴 값 뽑기 - 2개
+		String academy = (String)session.getAttribute("academy");
+		Person teacher = (Person)session.getAttribute("teacher");
+	%>
+	
+	<p>
+		학원명 : <%= academy %> <br>
+		강의장 : <%= classRoom %> <br>
+		선생님정보 : <%= teacher %> <br>
+		학생정보 :
+		<ul>
+			<li>이름 : <%= student.getName() %></li>
+			<li>나이 : <%= student.getAge() %></li>
+			<li>성별 : <%= student.getGender() %></li>	
+		</ul>
+	</p>
+	--%>
+	
+	<br><hr>
+	
+	<h3>2. EL을 이용해서 쉽게 Scope에 저장된 값을 뽑아서 출력 가능</h3>
+	
+	<p>
+		- EL은 xxx.getAttribute 메소드를 통해 값을 빼올 필요 없이 키값만 제시하면 바로 응답데이터에 접근 가능 <br>
+		- 내부적으로 해당 scope 형역의 해당 키값의 밸륙밧을 바로 가져와서 출력까지 해줄 수 있음 <br>
+		- 기본적으로 EL은 ServletScope 내장객체의 종류를 구분하지 않고 자동적으로 내장객체의 키값을 검색해서 존재하는 경우 꺼내줌
+		
+		<br><br>
+		
+		- 특히 응답데이터가 VO 객체 형식일 경우
+		.필드명 하면 필드값이 알아서 뽑혀 나옴. 근데 직접접근은 아님, 내부적으로 게터메소드 호출해서 뽑아오는 것임
+		
+	</p>
+	
+	<p>
+		학원명 : ${ academy } <br> <!-- sessionScope로부터 뽑아옴 -->
+		강의장 : ${ classRoom } <br> <!--  requestScope로부터 뽑아옴 -->
+		선생님 정보 : ${ teacher } <br> <!-- sessionScope로부터 뽑아옴 -->
+		<!-- 내부적으로 toString 메소드가 호출된 형태로 출력 -->
+		학생정보 : 
+		<ul>
+			<li>이름 : ${ student.name }</li>
+			<li>나이 : ${ student.age }</li>
+			<li>성별 : ${ student.gender }</li>
+		</ul>
+		<%--
+			- student 키값에 대한 밸류는 Person 타입임.
+			- 그냥 키값을 제시해서 출력하면 toString 메소드가 호출된 꼴로 출력됨
+			- 각 필드에 접근하고 싶다면 .필드명 하면 됨
+		 --%>
+	</p>
+	
+	<br><hr>
+	
+	<h3>3. 단, EL 사용시 내장객체들에 저장된 키값이 모두 동일할 경우(특이케이스)</h3>
+	
+	scope : ${ scope } <!-- request -->
+	
+	<%-- EL은 공유범위가 가장 낮은 객체부터 해당 키값을 검색함.
+		${ scope } 구문이 실행되는 순간 내부적으로 page => request => session => application 순으로
+		해당 키값에 대한 밸류값이 담겨있나 탐색함
+		
+		- 각 내장객체에 동일한 키값으로 밸류값을 담아두면 가장 공유범위가 작은 객체의 밸류값이 뽑힘.
+		
+		- 만약 모든 영역에서 다 잦지 못한 경우는? 아무 것도 출력되지 않음(오류페이지도 안뜸) --%>
+		
+		<br><hr>
+		
+		<h3>4. 직접 Scope 영역을 지정해서 값에 접근하기</h3>
+		
+		<%
+			// pageScope에 값 담기(jsp 페이지 내에서만 사용 가능함. 지역변수 개념)
+			pageContext.setAttribute("scope", "page");
+		%>
+		
+		pageScope에 담긴 값 : ${ scope } 또는 ${ pageScope.scope } <br>
+		<!-- pageContext.getAttribute("scope") 이게 내부적으로 실행됨 -->
+		
+		requestScope에 담긴 값 : ${ requestScope.scope }
+		<!-- requset.getAttribute("scope") 내부적으로 실행. -->
+		<!-- 나머지돋 같은 원리 -->
+		
+		<br><hr>
+		
+		잘못된 접근예시 : ${ sessionScope.classRoom }
+		<!-- session.getAttribute("classRoom") 내부적으로 실행. 아무것도 안뜸. 옹류도. -->
+		
+		<br><hr>
+		
+		<b> ${ sessionScope.teacher } 이런 것처럼 스코프명.키값 형태 더 권장 <br>
+			
+			- 가독성 높임, 더 정확한 동작 유도, 불필요한 탐색과정 줄임
+		</b>
+		
+		
+	
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

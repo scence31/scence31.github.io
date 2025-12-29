@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제이쿼리 개요</title>
+    <!-- 오프라인 방식 -->
+    <!-- <script src="resources/js/jquery-3.7.1.min.js"></script> -->
+
+    <!-- 온라인 방식 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- 연동 안하면 콘솔창에 $ or jQueryis not defined 오류 발생,
+        개발자 도구 소스탭에서 연동 여부 확인 가능 -->
+</head>
+<body>
+    
+    <h1>* JQuery 개요</h1>
+
+    <h3>1. JQuery란??</h3>
+
+    <p>
+        - 기존 자바스크립트언어 만으로 구현하기 복잡한 구문들을 간소화함(자바스크립트 라이브러리) <br>
+        - 즉 자바스크립트의 유용한 코드모음집 <br><br>
+
+        <b>적은 양의 코드로 빠르고 풍부한 기능을 제공함</b> <br><br>
+
+        - 제이쿼리 장점 <br>
+        1) DOM 요소와 관련된 스크립트를 쉽게 구현할 수 있음 <br>
+        2) Ajax(비동기식 요청방식), 이벤트 처리 등 폭넓은 기능을 지원함 <br>
+        3) 제이쿼리와 관련된 확장형 플러그인, 오픈 API 등을 지원해줌(차트, 슬라이드, 애니메이션효과, 드래그앤드롭효과 등) <br><br>
+
+        - 제이쿼리 단점 <br>
+        1) 라이브러리가 다소 무거움(성능관련 단점) 
+    </p>
+
+    <br><hr>
+
+    <h3>2. 제이쿼리 라이브러리 연동방법</h3>
+
+    <p>
+        - 기본 연동원리가 JavaScript external 방식임(외부 .js파일 다운) <br><br>
+
+        - .jQuery.js 파일을 다운받고 head 영역의 script 태그에 .js파일의 경로 제시 <br><br>
+
+        - 단, 기본 가닥은 external 방식인데, 크게 온/오프라인 방식으로 나뉨 <br><br>
+
+        - 제이쿼리 공식사이트:
+        <b><a href="http://jquery.com" target="_blank">제이쿼리 공식사이트</a></b> <br><br>
+
+        - 온라인이든 오프라인이든 명심할 사항 <br>
+
+        <b>jQuery 라이브러리는 크게 3가지 버전의 .js파일 제공해줌</b> <br>
+
+        1) Compressed 버전:
+        .min.js 파일 형식으로 배포됨, 주석, 개행 등 최소화, 용량 줄임(배포에 사용됨) <br>
+
+        2) UnCompressed 버전:
+        .js 파일 형식으로 배포됨, 개발자가 보기 쉽게 코드 정렬, 가독성 높음(개발단계에 사용됨) <br>
+
+        3) Slim 버전:
+        .slim.min.hs 형식 배포됨, Ajax, efeect 효과관련 코드 등 무거운코드 제외한 파일(우린 안씀) <br>
+
+        <br><br>
+
+        - 연동방법(온/오프라인 방식) <br>
+
+        1) 오프라인: .js 파일을 직접 다운로드 후 경로를 제시(파일을 직접 보유) <br>
+
+        2) 온라인: .js 라이브러리 파일 웹사이트 url주소를 제시해서 갖다씀(네티워크로) <br>
+        인터넷이 연결된 상태여야 함. CDN(Content Delivery Network) 방식이라고도 부름 <br>
+        ex) 구글 웹폰트 갖다쓰기, 이미지주소 복사해서 쓰기 등등
+        
+        <br><hr>
+
+        <h3>3. 제이쿼리 구문 작성하기</h3>
+
+        
+        <b>
+            - 제이쿠리 구문으로 DOM 요소를 다루는 데 많이 작성함, 
+            제이쿼리 명령은 문서상 요소들이 브라우저 창에 다 로딩된 후 실행돼야 함!
+        </b>
+
+        <br><br>
+
+        - 순수 자바스크립트에서 해당 구문은
+        <pre>
+            window.onload = function() {
+
+                실행내용;
+            };
+
+            onload 함수: html 페이지(문서)가 브라우저에 다 로딩되면 자동으로 단 한 번 실행되는 메소드 속성
+                        html 문서 내부에 단 한번만 작성할 수 있음(같은 속성값 여러번쓰면 덮어지니깐)
+                        해당 문서의 DOM 요소 뿐만 아니라, 연동된 외부파일들까지 다 로딩된 후 실행됨
+        </pre>
+
+        <script>
+            // * jQuery 구문이 모든 요소가 다 로딩된 후 실행돼야 하는 이유
+
+            // 예) 문서 내 모든 pre태그 글씨색깔을 빨강으로 변경
+            $("pre").css("color", "red");
+            // html, css, js 구문 모두 기본적으로 위에서 아래로 ㅇ릭힘
+            // 중간에 요소를 선택해서 효과를 주는 효과가 그냥 있으면
+            // 이 코드 기준으로 위에있는 요소만 선택되어 효과적용
+            // 그래서 모든 요소가 로딩된 후 제이쿼리 구문 실행
+
+
+        </script>
+
+        <script>
+
+            // 순수 자바스크립트 언어
+            window.onload = function() {
+                // 구문작성
+                console.log("문서 읽어들이기 완료");
+            }
+        </script>
+        
+        <br>
+
+        - 제이쿼리에서 window.onload 해당 내용은 3가지 구문으로 제공함
+
+        <pre>
+            1) jQuery(document).ready(function() {
+
+                실행내용;
+            });
+
+            2) $(document).ready(function() {
+
+                실행내용;
+            });
+
+            3) $(function() {
+
+                실행내용;
+            });
+
+            - jQuery == $
+            - jQuery에서 function들은 브라우저 상에 html 문서의(document) DOM들이 다 로딩되면
+            곧바로 한 번 실행됨(외부파일을 안읽어도 태그들만 로딩돼있으면 무조건 실행)
+            - 한 html 문서 내에서 여러 번 기술 가능함(window.onload와 다름)
+        </pre>
+
+        <script>
+            // jQuery 라이브러리
+            // 방식 1)
+            jQuery(document).ready(function() {
+
+                console.log('문서 읽어들이기 완료 1');
+            });
+
+            // 방식 2)
+            $(document).ready(function() {
+
+                console.log('문서 읽어들이기 완료 2');
+            });
+
+            // 방식 3)
+            $(function() {
+
+                console.log('문서 읽어들이기 완료 3');
+
+                // h3 요소들을 선택해서 배경색을 노란색으로 변경
+
+                // - 순수 자바스크립트 방식
+                /*
+                let h3Arr = document.getElementsByTagName('h3');
+                // [h3, h3, h3, h3 ...]
+
+                for(let i = 0; i < h3Arr.length; i++) {
+
+                    h3Arr[i].style.backgroundColor = 'yellow';
+                }
+                */
+
+                // jQuery 라이브러리 방식
+                $("h3").css("backgroundColor", "yellow");
+                // $("h3"): 이 html 문서의 모든ㄴ h3 요소들을 다 선택함
+                // .css(): 선택된 요소들의 스타일과 관련된 기능을 수행하는 메소드
+
+                // 굳이 복잡한 구문, 반복문을 통해 요소들을 선택하지 않아도 됨
+            });
+        </script>
+    </p>
+    
+</body>
+</html>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br>

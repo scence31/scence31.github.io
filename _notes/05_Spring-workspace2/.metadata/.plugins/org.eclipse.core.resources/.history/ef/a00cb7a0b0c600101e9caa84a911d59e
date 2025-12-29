@@ -1,0 +1,574 @@
+package com.kh.spring.member.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.kh.spring.member.model.service.MemberService;
+import com.kh.spring.member.model.vo.Member;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+// @Controller 어노테이션 또한 빈 등록용 어노테이션임!!
+// > DispatcherServlet 이 내부적으로 요청 시마다 이 클래스로 객체를 생성했던 것!!
+@Controller
+// > @Controller 어노테이션 대신 @Component 어노테이션을 써도 됨!! (같은 역할)
+//   @Controller 어노테이션이 더 명시적이라서 자주 쓰임!!
+// @Component
+
+// 이 MemberController 클래스에서 처리해야 하는 요청들은 모두 "회원 관련 요청들"
+// 그래서 죄다 url 요청 주소가 "member/xxx" 형식임!!
+// > 이 "member" 를 "공용 주소" 라고 부른다!!
+@RequestMapping("member")
+// > Controller 클래스 상단에 @RequestMapping 어노테이션으로 공용 주소 설정 가능!!
+public class MemberController {
+	
+	// MemberService 객체는 매 요청 처리마다 반드시 필요한 공통 객체임!!
+	// > 전역변수로 빼기
+	// private MemberService memberService = new MemberService();
+	// > 스프링의 특징 중 하나는 개발자인 내가 직접 객체 생성을 최대한 안하겠다 라는 것!!
+	//   모든 주도권이 스프링한테 있음!! MemberService 객체 또한 내가 필요할 때 마다
+	//	 스프링이 알아서 객체 생성 후에 쓰라고 던져줄것임!! (IoC, DI 특징)
+	// > MemberService 클래스를 빈으로 등록 해뒀음!! 
+	@Autowired
+	private MemberService memberService /* = new MemberService(); */;
+	// > 객체 선언문 까지만 적고 위에 @Autowired 어노테이션을 걸어 주면
+	//   내가 필요할 때 마다 해당 객체를 내부적으로 생성해서 던져주는 원리임!!
+	//   스프링의 "의존성 주입 (DI)" 특징이 반영된 구문임!!
+	
+	// 빈으로 등록해뒀던 BCryptPasswordEncoder 객체를 가져다 쓰겠다고 선언
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	// 로그인 요청 처리 메소드
+	// @PostMapping("member/login")
+	@PostMapping("login")
+	public String loginMember(Member m, String saveId, Model model, HttpSession session, HttpServletResponse response) {
+		
+		// 쿠키를 이용한 아이디저장 기능 추가
+		// 쿠키: 웹사이트를 구동하는 서버에서 사용자의 컴퓨터 브라우저에 저장하는 데이터(보완 미관련 기능 구현시 사용 권장)
+		// 쿠키 만드는 주체: 서버 / 보관 주체: 브라우저
+		// System.out.println(saveId);
+		// 아이디저장 체크하면 y or null
+		
+		// 쿠키사용법
+		// 1. 쿠키객체 생성(서버 단에서 자바코드로 작성. 문자열 타입의 키밸류로(키값 중복 안됨))
+		// Cookie cookie = new Cookie("키값", "밸류값");
+		//
+		// 2. 옵션) 쿠키생성시 만료시간(expires, maxage) 지정 가능
+		// cookie.setMaxAge(초단위만료시간);
+		//
+		// 3. 쿠키 생성하면 저장은 브라우저에 함
+		// 생성된 쿠키를 브라우저가 발아볼 수 있게 응답정보에 첨부하기
+		// HttpServletResponse 객체에서 제공하는 메소드 호출
+		// response.addCookie(cookie);
+		
+		
+		if(saveId != null && saveId.equals("y")) { // == 아이디 저장
+			
+			Cookie cookie = new Cookie("saveId", m.getUserId());
+			cookie.setMaxAge(1 * 24 * 60 * 60); // 1일(int 타입의 초단위)
+			
+			// 쿠키는 내가 만든 서버가 구동하는 웹사이트에서만 이용 가능함
+			// 생성된 쿠키를 브라우저가 받아볼 수 있도록 웹사이트의 주소도 정확하게 맞춰주기
+			cookie.setPath("/spring/"); // 메인페이지 밑에서 다 사용 가능함. context path 값 맞추기
+			
+			response.addCookie(cookie);
+			
+		} else {
+			
+			// 아이디값 쿠키 삭제
+			// 4. 쿠키삭제 명령문은 없음 => 똑같이 쿠키 생성하고 만료시간 0초로 하면 됨
+			Cookie cookie = new Cookie("saveId", "");
+			cookie.setMaxAge(0);
+			cookie.setPath("/spring/");
+			response.addCookie(cookie);
+		}
+		
+		// 암호화 작업 전
+		// > 아이디, 비번 평문이 모두 일치하는지로 쿼리문을 작성했었음!!
+		/*
+		// System.out.println("잘 호출되나?");
+		
+		// System.out.println(m);
+		// > 요청 시 전달값인 아이디, 비번이 제대로 가공되서 넘어옴!!
+		
+		// VO 를 Service 로 넘기면서 호출 후 결과 받기
+		Member loginUser = memberService.loginMember(m);
+		// > 아이디, 비번이 모두 일치하는 회원 한명만 조회 (단일행)
+		
+		// System.out.println(loginUser);
+		// > 로그인 성공 시에는 제대로된 Member 객체가, 
+		//   로그인 실패 시에는 null 값이 넘어오는 걸 알 수 있음!!
+		
+		// 결과에 따른 응답 화면 처리
+		if(loginUser == null) { // 로그인 실패
+			
+			// 에러문구를 담아서 에러페이지가 보여지게끔
+			// 1. 에러페이지를 나타내는 jsp 파일 먼저 생성 (재활용 가능하게끔)
+			// > views 폴더의 common 폴더 내에 errorPage.jsp 파일로
+			
+			// 2. 에러페이지에서 필요로 하는 데이터를 담기
+			// > 즉, 에러 문구 담아주기
+			model.addAttribute("errorMsg", "로그인에 실패했습니다.");
+			
+			// 3. 응답페이지가 보여지게끔 처리하기 (위임)
+			// > Model 에 응답데이터를 담았으므로 문자열로 해당 jsp 경로를 리턴
+			return "common/errorPage";
+			// /WEB-INF/views/common/errorPage.jsp
+			
+		} else { // 로그인 성공
+			
+			// 응답데이터를 Servlet Scope 내장객체에 키 + 밸류 세트로 담고
+			// 응답화면이 보여지게끔 처리해주면 끝!!
+			
+			// 응답데이터가 로그인한 회원의 정보임!!
+			// > 로그인한 회원의 정보를 로그아웃때까지 다 꺼내다 쓸 수 있게끔 
+			//   sessionScope 에 담을 것!! (전역변수 역할)
+			session.setAttribute("loginUser", loginUser);
+			
+			// 이제 menubar.jsp 에 1회성 alertMsg 를 출력해주는 코드를 작성했기 때문에
+			// 기능 재활용이 가능하다!!
+			session.setAttribute("alertMsg", "성공적으로 로그인이 되었습니다.");
+			
+			// * 응답페이지를 보여주는 방법은 사실 두가지 방법이 있음!!
+			// 1. 포워딩 방식 - 그동안 맨날 연습했던 방식!!
+			// > 응답페이지용 jsp 파일을 새로이 하나 만들어서
+			//   현재 브라우저에 보이는 url 주소는 그대로, 그 화면만 바꿔치기 하는 방식
+			
+			// 2. url 재요청 방식 - sendRedirect 방식
+			// > url 주소를 제시하여 이미 존재하는 컨트롤러에 다시 요청을 보내
+			//   그 컨트롤러에서 보여주는 화면을 띄워주는 방식
+			// > 자바스크립트의 location.href = "url주소"; 와 같은 동작 원리
+			// > 응답데이터를 request (model) 에 담을 경우
+			//   서버로 다시 한번 url 주소 요청을 통해 그에 해당되는 응답페이지를 보여주는 원리이기 때문에
+			//   응답데이터가 다 날라가게 된다!! (보통 그래서 url 재요청 시 응답데이터를 session 에 담음)
+			
+			// 메인페이지로 응답화면이 보여지게끔
+			// 1. 포워딩 방식으로 응답뷰를 띄워줄 경우
+			// return "index";
+			// /WEB-INF/views/index.jsp
+			// > 분명히 눈에는 메인페이지가 보이나,
+			//   url 주소창에는 http://localhost:8006/spring/member/login
+			//   으로 적혀 있음!! (화면과 url 주소의 불일치 현상 발생!!)
+			
+			// 2. url 재요청 방식으로 응답뷰를 띄워줄 경우
+			// 메인페이지가 보여지고 싶은거니까 그냥 메인페이지 url 주소로 쏘면 되겠네?
+			// 메인페이지의 url 주소 : http://localhost:8006/spring
+			// > 이쪽으로 대놓고 요청을 다시 보내서 메인페이지가 보여지게 해주겠다!!
+			// [ 표현법 ]
+			// return "redirect:url주소";
+			return "redirect:/";
+			// > / 는 /spring 뒤의 / 를 나타냄!!
+			
+			// > 각 서비스마다 사용되는 방식이 다름!!
+			//   로그인 시에는 url 재요청 방식이 쓰임!!
+		}
+		*/
+		
+		// 암호화 작업 후
+		// > 비밀번호는 일치함을 비교할 수 없게 됨!!
+		//   비밀번호를 하필이면 "단방향" 방식으로 암호화 했기 때문!!
+		//   또한 암호화 하기전에 랜덤값을 붙여서 암호화 했기 때문!!
+		// System.out.println(m);
+		// > Member m 의 userId 필드 : 사용자가 입력한 아이디 "평문"
+		//				 userPwd 필드 : 사용자가 입력한 비번 "평문"
+		
+		// 일단 이 m 을 Service -> Dao 로 넘겨서 해당 회원의 정보를 조회해올 것임!!
+		// (단, 비밀번호를 제외한 조건으로 조회해올 것)
+		Member loginUser = memberService.loginMember(m);
+		// > 일차적으로 아이디 일치 여부와 탈퇴 여부만 검사해서 한명의 회원 정보만 조회해온 것!!
+		//   만약 아이디도 일치하고 탈퇴 상태도 아니라면 제대로된 Member 객체,
+		//       아이디가 일치하지 않거나, 탈퇴 상태라면 null 이 넘어올 것임!!
+		
+		// System.out.println(loginUser);
+		// > loginUser 의 userPwd 필드 : 조회해온 해당 회원의 비번 "암호문"
+		
+		// 우린 이미 평문 비번도 갖고있고, 방금 암호문 비번도 갖고 온 꼴임!!
+		// System.out.println("평문 : " + m.getUserPwd());
+		// System.out.println("암호문 : " + loginUser.getUserPwd());
+		
+		// 이 상황에서 비번을 대조해보자!!
+		// > BCryptPasswordEncoder 객체에서 제공하는 평문과 암호문을 대조시켜주는 메소드 이용
+		//   bCryptPasswordEncoder.matches("평문", "암호문") : boolean
+		//   일치하면 true, 일치하지 않으면 false 리턴
+		
+		if((loginUser != null) && 
+		   (bCryptPasswordEncoder.matches(m.getUserPwd(), loginUser.getUserPwd()))) { // 로그인 성공
+			
+			session.setAttribute("loginUser", loginUser);
+			session.setAttribute("alertMsg", "성공적으로 로그인이 되었습니다.");
+			
+			return "redirect:/";			
+			
+		} else { // 로그인 실패
+			
+			model.addAttribute("errorMsg", "로그인에 실패했습니다.");
+			
+			return "common/errorPage";
+		}
+		
+	} // loginMember 끝
+	
+	// 로그아웃 요청 시 처리 메소드
+	// @GetMapping("member/logout")
+	@GetMapping("logout")
+	public String logoutMember(HttpSession session) {
+		
+		// 로그인 요청 처리
+		// > 알맞은 회원의 정보를 조회해와서 session 에 담기
+		
+		// 로그아웃 요청 처리
+		// > session 에 담긴 해당 회원의 정보를 날려버리기
+		
+		// * 로그아웃 구현 방법 2가지
+		// 1. session 에 담겨있는 loginUser 에 대한 키 + 밸류 세트를 지우는 방법
+		// > removeAttribute 메소드를 활용하기
+		session.removeAttribute("loginUser");
+		
+		// 2. session 객체 자체를 만료시키는 방법
+		// > session 을 무효화 시킨다.
+		// session.invalidate();
+		// > 단, 이 방법 같은 경우 
+		//   session 객체에 loginUser 이외의 다른 데이터도 담겨있다면 쓰면 안된다!!
+		
+		// * session 객체에 반드시 로그인한 회원의 정보만 담으라는 법은 없다!!
+		// > 제약이 다소 있는 전역변수 개념이다 보니 다른 데이터도 언제든지 담을 수 있음!!
+		// 예) session 객체에 1회성 alert 문구를 담기!!
+		// > 응답페이지를 url 재요청 방식으로 보여주기 때문!!
+		session.setAttribute("alertMsg", "성공적으로 로그아웃이 되었습니다.");
+		
+		// 메인페이지로 url 재요청
+		return "redirect:/";
+		
+	} // logoutMember 끝
+	
+	// 회원가입 페이지 요청 처리 메소드
+	// @GetMapping("member/enrollForm")
+	@GetMapping("enrollForm")
+	public String enrollForm() {
+		
+		// 회원가입 페이지만 띄우고 끝!! (포워딩 방식)
+		return "member/memberEnrollForm";
+		// > /WEB-INF/views/member/memberEnrollForm.jsp
+	
+	} // enrollForm 끝
+	
+	// 회원가입 요청 처리 메소드
+	// @PostMapping("member/insert")
+	@PostMapping("insert")
+	public String insertMember(Member m, Model model, HttpSession session) {
+		
+		// System.out.println(m);
+		// > 이 넘어온 m 을 그대로 Service -> Dao 로 넘겨서 DB 의
+		//   MEMBER 테이블에 INSERT 하는 것이 "회원가입" 기능임!!
+		
+		// > 비밀번호가 사용자가 입력했던 텍스트 그대로 보여짐!!
+		// 원인 : 딱히 없음 (요청 시 전달값이 제대로 넘어오는 것이 당연함)
+		// 조치 : 비밀번호를 사람이 한눈에 알아보지 못하게끔 변환해서 저장할 것!!
+		
+		// * 암호화
+		// > 어떤 텍스트를 사람들이 한눈에 알아보지 못하게끔 변환하는 작업
+		// - 평문 : 원래의 텍스트값 (사람이 한눈에 알아보는 원래의 텍스트 값)
+		// - 암호문 : 평문을 한번에 보기 난해하게 바꿔둔 문자열 텍스트
+		
+		// > 이 때, 평문 --> 암호문 으로 바꾸는 작업을 "암호화" 작업 이라고 함!!
+		//		   암호문 --> 평문 으로 바꾸는 작업을 "복호화" 작업 이라고 함!!
+		// > 암호화를 하는 방법은 여러 가지가 있다. (암호화 알고리즘)
+		//   크게 2가지 종류가 있는데
+		//	 1) 양방향 암호화 알고리즘 : 암호화 + 복호화 과정 둘 다 제공
+		//   2) 단방향 암호화 알고리즘 : 암호화 과정만 제공 (복호화 X)
+		// > 우리는 단방향 암호화 알고리즘을 이용해서 비밀번호를 암호문으로 바꿀 것!!
+		//   (즉, 저장된 비밀번호를 평문으로 되돌릴 수 없다!!)
+		// > 스프링에서 제공하는 BCrypt 라는 방식의 암호화 모듈을 이용할 것!!
+		//   평문을 그냥 암호문으로 바꿔주는게 아니라,
+		//   평문에 매번 랜던값 (salt값) 을 하나씩 붙여서 그걸 암호문으로 바꿔줌!!
+		
+		// 암호화 작업 전 비번 (평문 비번)
+		// System.out.println("평문 : " + m.getUserPwd());
+		
+		// 암호화 작업
+		// > Spring Security 모듈에서 제공하는 BCryptPasswordEncoder 라는 
+		//   클래스 에서 제공하는 메소드를 통해 암호화 과정을 거칠 수 있다!!
+		// bCryptPasswordEncoder.encode("평문") : "암호문"
+		String encPwd = bCryptPasswordEncoder.encode(m.getUserPwd());
+		// System.out.println("암호문 : " + encPwd);
+		// > 아무리 평문이 같더라도 매번 다른 랜덤값을 붙여서 암호화를 하기 때문에
+		//   매번 다른 결과가 나오게 된다!!
+		
+		// 이 암호화된 비번을 Member m 의 userPwd 필드로 덮어씌울것!!
+		m.setUserPwd(encPwd);
+		// System.out.println(m);
+		
+		// 최종적으로 셋팅된 Member m 을 Service -> Dao 로 넘겨서 INSERT
+		int result = memberService.insertMember(m);
+		
+		// 결과에 따른 응답페이지 처리
+		if(result > 0) { // 회원가입 성공
+			
+			// 일회성 alert 문구를 담아서 메인페이지로 url 재요청
+			session.setAttribute("alertMsg", "회원가입에 성공했습니다.");
+			
+			return "redirect:/";
+			
+		} else { // 회원가입 실패
+			
+			// 에러 문구를 담아서 에러페이지로 포워딩
+			model.addAttribute("errorMsg", "회원가입에 실패했습니다.");
+			
+			return "common/errorPage";
+			// /WEB-INF/views/common/errorPage.jsp
+			
+		}
+		
+	} // insertMember 끝
+	
+	// 마이페이지 요청 처리 메소드
+	@GetMapping("myPage")
+	public ModelAndView myPage(ModelAndView mv) {
+		
+		System.out.println("마이페이지접속");
+		
+		// 마이페이지 첫 진입 시 내 정보가 조회되어야만 함!!
+		// > 현재 로그인된 회원의 정보 (아이디값, 회원번호 같은 것)
+		//   를 가지고 Service -> Dao 로 조회해온 뒤
+		//   응답데이터로 넘겨서 화면에 뿌려주면 됨!!
+		// > 굳이 DB 까지 안다녀와도됨!!
+		//   마이페이지는 "로그인한 회원" 만 이용 가능한 페이지!!
+		//   로그인한 회원 == 현재 전역변수 역할인 session 에 그 회원의 정보가 통으로 담겨있음
+		// > 굳이 응답데이터를 어딘가에 담지 않아도 됨
+		
+		mv.setViewName("member/myPage");
+		// /WEB-INF/views/member/myPage.jsp
+		
+		return mv;
+	
+	} // myPage 끝
+	
+	// 회원 정보 수정 요청 처리 메소드
+	@PostMapping("update")
+	public ModelAndView updateMember(Member m, ModelAndView mv, HttpSession session) {
+		
+		// System.out.println(m);
+		
+		int result = memberService.updateMember(m);
+		
+		// 결과에 따른 응답페이지 처리
+		if(result > 0) { // 회원 정보 수정 성공
+			
+			// 방금 갱신된 회원의 정보를 다시 조회해와서 세션에 덮어씌운 후
+			// > 로그인 유지가 되야되니까!!
+			//   지금 세션에 담긴 로그인된 정보와 DB 에 담긴 정보가 불일치하는 상황을 해결
+			
+			// 기존의 로그인용 서비스 재활용 (아이디, 탈퇴여부로만 한명의 회원의 정보 조회)
+			Member updateMem = memberService.loginMember(m);
+			
+			session.setAttribute("loginUser", updateMem);
+			// > session 에는 원래 loginUser 키 + 밸류가 들어있던 상태임!!
+			//   같은 키값으로 한번 더 데이터를 넣은 꼴!!
+			//   같은 키값으로 데이터를 한번 더 넣으면 덮어씌워짐!! (HashMap 과 동일)
+			
+			// 일회성 알람 문구 또한 session 에 담기
+			session.setAttribute("alertMsg", "성공적으로 회원 정보가 변경되었습니다.");
+			
+			// 마이페이지로 url 재요청
+			// ModelAndView 객체로 url 재요청 시
+			mv.setViewName("redirect:/member/myPage");
+			// > 포워딩과 마찬가지로 setViewName 메소드 이용
+			
+		} else { // 회원 정보 수정 실패
+			
+			// 에러 문구를 담아서 에러페이지로 포워딩
+			mv.addObject("errorMsg", "회원 정보 변경에 실패했습니다.");
+			
+			mv.setViewName("common/errorPage");
+			// /WEB-INF/views/common/errorPage.jsp
+		}
+		
+		return mv;
+		
+	} // updateMember 끝
+	
+	// 비밀번호 변경 요청 처리 메소드
+	@PostMapping("updatePwd")
+	public String updatePwd(String userId, String userPwd, String updatePwd, HttpSession session) {
+		
+		// System.out.println(userPwd); // 기존 비번 "평문"
+		// System.out.println(updatePwd); // 변경할 비번 "평문"
+		
+		// * 현재 로그인한 회원의 정보를 알아내는 방법
+		// 1. HttpSession 객체로부터 바로 꺼내오는 방법
+		// String userId = ((Member)session.getAttribute("loginUser")).getUserId();
+		
+		// 2. form 태그 내부에서 <input type="hidden"> 을 통해
+		//    현재 로그인한 회원의 정보를 넘겨주는 방법
+		// System.out.println(userId); // 변경할 회원의 아이디
+		
+		// 우선, 사용자가 입력했던 평문 기존 비번과 세션에 담겨있는 로그인한 회원의 
+		// 암호문 비번이 일치하는지를 먼저 따져볼 것!!
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		
+		if(bCryptPasswordEncoder.matches(userPwd, loginUser.getUserPwd())) {
+			// 평문과 암호문 기존 비번이 모두 일치할 경우
+			// > 비밀번호 변경 서비스 요청 (비밀번호 변경 진행)
+			
+			// 변경할 비번 updatePwd 또한 암호화 작업 후 서비스로 요청
+			String updateEncPwd = bCryptPasswordEncoder.encode(updatePwd);
+			
+			// 아이디, 변경할 비번의 암호문을 Service -> Dao 로 넘길 것
+			// > Member 타입의 VO 객체로 가공 후 한번에 넘기기
+			Member m = new Member();
+			m.setUserId(userId);
+			m.setUserPwd(updateEncPwd);
+			
+			int result = memberService.updatePwd(m);
+			
+			// 처리된 결과에 따라 응답페이지 지정하기
+			// > 성공이든 실패든 간에 마이페이지로 url 재요청
+			//   각각 상황에 맞는 일회성 알람 문구만 다르게 담을 것
+			if(result > 0) { // 비밀번호 변경 성공
+				
+				// 비밀번호 변경 성공일 경우에도 또한
+				// 갱신된 회원의 정보를 다시 조회해와서 세션에 덮어씌워야함!!
+				// > 로그인 유지
+				Member updateMem = memberService.loginMember(m);
+				// > 기존 로그인 서비스 재활용
+				
+				session.setAttribute("loginUser", updateMem);
+				
+				session.setAttribute("alertMsg", "성공적으로 비밀번호가 변경되었습니다.");
+				
+			} else { // 비밀번호 변경 실패
+				
+				session.setAttribute("alertMsg", "비밀번호 변경에 실패했습니다.");
+			}
+			
+		} else {
+			// 평문과 암호문 기존 비번이 맞아 떨어지지 않을 경우
+			// > 즉, 기존 비번을 잘못 입력한 경우 (비밀번호 변경 진행 X)
+			
+			// 일회성 알람 문구로 기존 비번을 잘못 입력했다고 알려주기
+			session.setAttribute("alertMsg", "잘못된 비밀번호 입니다. 다시 입력해 주세요.");
+		}
+	
+		// 마이페이지 url 재요청
+		return "redirect:/member/myPage";
+	
+	} // updatePwd 끝
+	
+	// 회원 탈퇴 요청 처리 메소드
+	@PostMapping("delete")
+	public String deleteMember(String userPwd, HttpSession session, Model model) {
+		
+		// 회원 탈퇴용 쿼리문에서 현재 로그인한 회원의 아이디를 필요로 함!!
+		// 1. form 쪽에서 input type="hidden" 으로 넘겨주는 방법
+		// 2. 이 컨트롤러에서 그냥 session 에 직접 접근해서 뽑아오는 방법
+		
+		// 현재 로그인한 사용자의 정보
+		Member loginUser = (Member)session.getAttribute("loginUser");
+		
+		// System.out.println(loginUser); // userPwd 필드 : 암호화된 비번
+		// System.out.println(userPwd); // 전달값 userPwd : 평문 비번
+		
+		// 우선, 입력받은 평문 비번과 현재 로그인한 사용자의 암호문 비번이
+		// 맞아 떨어지는지 부터 검사할 것임!!
+		if(bCryptPasswordEncoder.matches(userPwd, loginUser.getUserPwd())) {
+			// 평문과 암호문 비번이 맞아 떨어질 경우
+			// > 회원 탈퇴 서비스 요청 (탈퇴 진행)
+			
+			// 탈퇴 서비스는 아이디만 (unique) 을 이용해서 탈퇴 처리를 하면 됨!!
+			int result = memberService.deleteMember(loginUser.getUserId());
+			
+			// 결과에 따른 응답 페이지 처리
+			if(result > 0) { // 회원 탈퇴 성공
+				
+				// 회원 탈퇴에 성공했다면 로그아웃까지 자동으로 시켜야함!!
+				session.removeAttribute("loginUser");
+				// > 세션을 무효화하는 방식은 사용 불가!!
+				
+				// 일회성 알람 문구를 담아서 메인페이지로 url 재요청
+				session.setAttribute("alertMsg", "성공적으로 회원 탈퇴 되었습니다. 그동안 이용해 주셔서 감사합니다.");
+				
+				return "redirect:/";
+				
+			} else { // 회원 탈퇴 실패
+				
+				// 에러문구를 담아서 에러페이지로 포워딩
+				model.addAttribute("errorMsg", "회원 탈퇴에 실패했습니다.");
+				
+				return "common/errorPage";
+				// /WEB-INF/views/common/errorPage.jsp
+			}
+			
+		} else {
+			// 평문과 암호문 비번이 맞아 떨어지지 않을 경우
+			// 즉, 기존 비밀번호를 잘못 입력했을 경우 
+			// > 회원 탈퇴 X
+			
+			session.setAttribute("alertMsg", "잘못된 비밀번호 입니다. 다시 입력해 주세요.");
+			
+			// 마이페이지 url 재요청
+			return "redirect:/member/myPage";
+		}
+		
+	} // deleteMember 끝.
+	
+	// 아이디 중복체크요청처리 메소드
+	@ResponseBody
+	@GetMapping("idCheck")
+	public String ajaxIdCheck(String checkId) {
+
+		// 중복확인할 아이드를 Service -> Dao로 보내서
+		// MEMBER 테이블로부터 동일한 아이디값이 이미 존재하는지 검사
+		int count = memberService.ajaxIdCheck(checkId);
+		
+		/*
+		if(count > 0) {
+			
+			return "NNNNN";
+			
+		} else {
+			
+			return "NNNNY";
+		}
+		*/
+		
+		// 삼항연산자 사용
+		return (count > 0) ? "NNNNN" : "NNNNY";
+	}
+	
+	// -----------------------------------------------------------------
+	// 리액트와 연동할 수 있는 Controller 메소드 하나 작성 (예시)
+	
+	// 회원목록 조회용 메소드
+	@GetMapping("list")
+	public void selectMemberList() {
+		
+		// System.out.println('?');
+	}
+	
+	
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

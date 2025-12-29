@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>content 영역 관련 메소드</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+    <h1>* Content 영역(innerHTML, innerText) 관련 메소드</h1>
+
+    <h3>1. html() 메소드: innerHTML 속성과 관련된 메소드</h3>
+
+    <p>
+        - 선택된 요소의 Content 영역(시작과 종료태그 사이) 값을 리턴 or 변경해주는 메소드 <br>
+
+        - $("선택자").html() 
+        : 선택된 요소의 Content 영역의 값을 반환해줌(innerHTML 속성값을 리턴해주는 getter 역할) <br>
+
+        - $("선택자").html('문구') 
+        : 선택된 요소의 Content 영역의 값을 해당 문구로 변경해줌(속상값을 문구로 대입해주는 setter 역할) <br>
+
+    </p>
+
+    <h1 id="test1">
+        <a>네이버로</a>
+    </h1>
+
+    <h1 id="test2"></h1>
+
+    <script>
+        jQuery(document).ready(function() {
+
+            // 순수 자바스크립트 구분
+            // let tmp = document.getElementById("test1").innerHTML;
+            // console.log(tmp);
+            // document.getElementById('test2').innerHTML = tmp;
+
+            // jQuery 구문
+            let tmp = $("#test1").html();
+            console.log(tmp); // "<a>네이버로</a>"
+            $("#test2").html(tmp);
+            // id가 test2인 요소 내부에 a태그가 출력
+
+            // 방금 새로 만들어진 a 요소 객체에 href 속성을 추가
+            $("#test2").children().attr("href", "http://www.naver.com");
+        });
+    </script>
+
+    <br><br>
+
+    <div class="class1">test1</div>
+    <div class="class1">test2</div>
+    <div class="class1">test3</div>
+
+    <script>
+        $(document).ready(function() {
+
+            // $(".class1").html("<h1>zzz</h1>");
+            // [div, div, div]
+            // 내부적으로 반복돌면서 순차적으로 선택된 모든 요소에 적용
+
+            // 각각 다른 내용으로 출력하고싶다면?
+            // 선택된 요소들에 순차적으로 접근할 때마다 보조해줄 수 잇는 function 넘기기
+            // 매개변수 인자로 넘기는 보조해주는 함수 == callback function
+            /*
+            var count = 0;
+            $(".class1").html(function() {
+
+                return '<h1> zzz' + count++ + "</h1>";
+            });
+            */
+            // 함수 실행 후 리턴된 값으로 innerHTML 값이 변경됨
+
+            // html 메소드 콜백함수 구성
+            // $(".class1")
+            // [div, div, div]
+            $(".class").html(function(index, html) {
+                // 이 콜백함수는 익명함수이므로 내가 직접 호출 불가능
+                // 따라서 매개변수 또한 내가 원하는 값으로 전달 못받음
+                // 즉, 내가 원하는 값으로 받아서 활용 못하는 매개변수임
+                // 남이 주는 대로 써야하는 값임
+
+                // console.log(index, html);
+                // 0 "test1"
+                // 1 "test2"
+                // 2 "test3"
+                // index : 선택된 여러개의 요소가 담겨있는 배열의 인덱스 수
+                // html : 0번부터 순차적으로 접근되는 요소의 innerHTML 속성값
+
+                return "<h1>인덱스: " + index + ", content 내용: " + html + "</h1>";
+
+            })
+        })
+    </script>
+
+    <br><hr>
+
+    <h3>2. text() 메소드 : innerText 속성과 관련된 메소드</h3>
+
+    <p>
+        - 선택된 요소의 Content(시작, 종료태그 사이) 값을 리턴해주거니 변경해주는 메소드 <br>
+
+        $("선택자").text() 
+        : 선택된 요소의 Content 영역 값을 반환해줌(innerText 속성값을 리턴해주는 getter 역할) <br>
+
+        $("선택자").text("문구") 
+        : 선택된 요소의 Content 영역의 값을 해당 문구로 변경해줌( inner~ 문구로 대입해주는 setter 역할) <br>
+    </p>
+
+    <h1 id="test3">
+        <a>구글로</a>
+    </h1>
+
+    <h1 id="test4"></h1>
+
+    <script>
+        $(function() {
+
+            // - 순수 자바스크립트 방식
+            // let tmp = document.getElementById("test3").innerText;
+            // console.log(tmp);
+            // document.getElementById("test4").innerText = tmp;
+
+            // - jQuery 방식
+            let tmp = $("#test3").text();
+            console.log(tmp);
+            $("#test4").text(tmp);
+        })
+    </script>
+
+    <br><br>
+
+    <div class="class2">test2</div>
+    <div class="class2">test2</div>
+    <div class="class2">test2</div>
+
+    <script>
+        jQuery(document).ready(function() {
+
+            // text 메소드 또한 콜백함수 이용 가능
+            // $(".class2").text("<h1>안녕하세요</h1>");
+
+            // 콜백함수
+            /*
+            let count = 1;
+            $(".class2").text(function() {
+
+                return "<h" + count + ">안녕하세요</h" + count++ + ">";
+            })
+            */
+
+            // 콜백함수의 매개변수
+            // $(".class2")
+            // [div, div, div]
+            $(".class2").text(function(index, text) {
+
+                console.log(index, text);
+                // 0 "test2"
+                // 1 "test2"
+                // 2 "test2"
+                // index : 선택된 요소들이 담겨있는 배열의 0부터 각 인덱스 수
+                // test : 해당 인덱스 번째 요소의 innerText 값
+
+                return "<h1>인덱스 : " + index + ", 내용" + text + "</h1>";
+            })
+        })
+    </script>
+    
+</body>
+</html>
+
+<br><br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br><br><br><br>

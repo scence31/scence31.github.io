@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라이브러리 의존성 관리</title>
+    <!-- 기존 제이쿼리 라이브러리 CDN방식으로 연동 -->
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    -->
+
+</head>
+<body>
+
+    <h1>8. 라이브러리 의존성 관리</h1>
+
+    <p>- 기존 외부방식으로 .js파일을 가져와서 쓸 때
+        head 영역 안에 script 태그를 이용해서 연동했었음. <br>
+
+        - 외부방식으로 .js 파일을 가져와서 쓰려고 할 때, script 태그가 아닌 import 구문으로 연동 <br>
+
+        - CDN 방식을 대체하는 방법
+    </p>
+
+    <h3>1. 기존의 CDN 방식(script 태그 이용)</h3>
+    
+    <p>- head 영역에 스크립트로 src 속성에 갖다쓰려는 js파일의 url 주소를 기술</p>
+
+    <button id="btn1">알림창 출력1</button>
+
+    <script>
+        $(() => {
+
+            // btn1에 클릭이벤트 부여 제이쿼리로
+            $("#btn1").click(() => {
+
+                alert('실행');
+            });
+        });
+    </script>
+
+    <br><hr>
+
+    <h3>2. 라이브러리 의존성 관리 방식(import 구문 이용)</h3>
+
+    <p>- 기존의 스크립트태그를 이용한 CDN 방식을 대체하여 자바처럼 import 구문을 이용해서 .js파일 url 경로 기술</p>
+    
+    <button id="btn2">알림창 출력2</button>
+
+    <!-- 단, 외부 js모듈(라이브러리)를 갖고올 경우에는
+        import 구문을 감싸는 script 태그에 type='module' 속성을 반드시 기술해야함 
+    -->
+    <script type="module">
+        // 제이쿼리 라이브러리 선언
+        import "https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js";
+
+        $(() => {
+
+            $("#btn2").click(() => {
+
+                alert('?');
+            });
+        });
+        // 근데 제이쿼리의 경우 import 안쓰고 script 태그로 연동해서 씀
+    </script>
+
+    <br><hr>
+
+    <h3>3. 내가 직접 만든 .js 모듈을 임포트해보기</h3>
+
+    <p>- 내가 직접 만든 .js 파일을 import 해서 쓸 수 있음. <br>
+        - 단, import 구문은 CDN 방식만 대체할 수 있음. <br>
+        - 보안상의 이유로 직접 만든 .js 파일을 연동 실패 file:// <br> <br>
+
+        해결방법: 이 컴퓨터를 서버로 만들기 http:// <br>
+
+        * VSCode 상에서 간단하게 서버를 구축할 수 있음
+        마켓플레이스에서 live server 확장팩 설치하기
+
+
+    </p>
+
+    <button id="btn3">안녕</button>
+    <button id="btn4">잘가</button>
+    <button id="btn5">변수출력</button>
+
+    <script type="module">
+        /*
+        import {sayHello} from "./resources/js/sayModule.js"; // sayModule.js 파일로부터 sayHello 함수를 갖다 쓰겠다. 임포트
+        import {sayBye} from "./resources/js/sayModule.js";
+        import {num} from "./resources/js/sayModule.js"; // 변수 갖다쓰기
+        */
+
+        // import 한번에 하기
+        // import {sayHello, sayBye, num} from "./resources/js/sayModule.js";
+        
+        // 별칭으로 export하면 맞춰서 import
+        // import {hi, bye, n} from "./resources/js/sayModule.js";
+        // 별칭으로 가져오면 별칭으로 호출해야 함
+
+        // 또 줄이기
+        import * as say from "./resources/js/sayModule.js";
+        /*
+            내부적으로
+            let say = {hi: function() {}, bye: function() {}, n: 22};
+            객체 단위로 모듈이 전달됨. 별칭이 곧 객체명
+            (별칭 안써도 마찬가지임)
+        */
+
+        // id가 btn3인 요소를 클릭하는 순간 sayHello 함수를 실행시키기
+        document.getElementById('btn3').onclick = function() {
+
+            say.hi('홍길동'); // 별칭으로 호출
+        };
+
+        document.querySelector('#btn4').onclick = (() => {
+
+            say.bye('잘가');
+        });
+
+        // id가 btn5인 요소를 클릭하는 순간 num 출력
+        document.querySelector("#btn5").onclick = (() => {
+
+            alert(say.n);
+        })
+    </script>
+
+    <br><br>
+
+    <!--
+        .js파일 한 개 == 모듈
+
+        .js 파일 한 개당 함수 하나만 정의 후 내보내서 갖다 써도 됨.
+        .js 파일 한 개당 함수, 변수 여러 개를 정의한 해도 됨.
+
+        .js 파일 한 개당 클래스 하나만 정의 후 내보내서 갖다 써보기.
+    -->
+    <button id="btn6">클래스 단위의 모듈 작성</button>
+
+    <script type="module">
+        import S from "./resources/js/Student.js";
+        // export default로 내보낸 경우 중괄호 제거 가능
+        
+        document.querySelector("#btn6").onclick = () => {
+
+            let hong = new S('홍길동', 20, 'E강의장');
+
+            alert(hong);
+        };
+
+    </script>
+    
+    
+</body>
+</html>
