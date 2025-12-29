@@ -21,14 +21,13 @@ Stack 영역과 Heap 영역<br>
 
 * 배열<br>
 같은 타입의 값을 나열해서 관리<br>
-int[] arr = new {1, 2, 3}; // arr 변수는 Stack에 저장, 데이터 {1, 2, 3}은 Heap에 저장됨<br><br>
+int[] arr = {1, 2, 3}; // arr 변수는 Stack에 저장, 데이터 {1, 2, 3}은 Heap에 저장됨<br><br>
 
 * 객체<br>
 클래스를 통해 생성된 인스턴스<br>
 Member m = new Member(); // m 변수는 Stack에, 실제 Member 객체 데이터는 Heap에 생성됨<br><br>
 
 **배열과 객체는 무조건 Heap에 저장, 주소값만 Stack에 저장됨**
-**Stack에 있는 주소를 통해 Heap에 있는 실제 데이터에 접근하는 과정**
 
 이유는?<br>
 1. Stack은 크기가 변하는 데이터 담기 어려움 - 컴파일 시점에 크기 정해져야 함<br>
@@ -37,6 +36,8 @@ Member m = new Member(); // m 변수는 Stack에, 실제 Member 객체 데이터
 2. Heap에 있으면 다른 메서드에서 주소값만 전달받으면 언제든 사용 가능함<br>
 
 3. 메모리를 효율적으로 관리할 수 있음
+
+**자바는 결국 Stack에 있는 주소를 통해 Heap에 있는 실제 데이터에 접근하는 과정**
 
 
 
