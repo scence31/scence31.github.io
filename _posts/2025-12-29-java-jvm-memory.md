@@ -5,3 +5,6 @@ categories: [Backend, Java]
 tags: [java, jvm, memory]
 ---
 
+* JVM
+Java Virtual Machine 약자로, 자바 프로그램을 실행하는 가상 머신
+OS 상관없이 자바를 실행
