@@ -53,9 +53,8 @@ tags: [project, react, STS]
 2. LocalStorage에 저장하고, 모든 요청에 대해 토큰을 header에 담아 전송함으로 보안성을 강화했습니다.
 
 ### 주요 설정
-1. BCryptPasswordEncoder 암호화
+1. **BCryptPasswordEncoder**: 비밀번호를 단방향 해시 암호화해서 DB에 저장
 ```java
-// 단방향 해시 암호화 후 보관(DB에 그대로 저장 X)
 @Bean
 public static BCryptPasswordEncoder bCryptPasswordEncoder() {
 
@@ -63,23 +62,138 @@ public static BCryptPasswordEncoder bCryptPasswordEncoder() {
 }
 ```
 
-2. 이메일(계정 찾기 및 인증)
-```properties
+2. **이메일 SMTP**: 회원가입 및 계정 찾기 시 인증
+```ini
 # SMTP 서버 설정
 spring.mail.host=smtp.gmail.com
 spring.mail.port=587
 
+# gmail 계정 설정
 spring.mail.username=abcd@gmail.com
 spring.mail.password=abcd
 
+# 프로토콜(통신 규약) 및 인코딩 설정
 spring.mail.protocol=smtp
 spring.main.default-encoding=UTF-8
 
+# 보안 설정
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
 spring.mail.properties.mail.smtp.starttls.required=true
 ```
 
+3. **JWT(JSON Web Token)**: 사용자 정보를 담은 토큰을 발급해 세션 없이도 인증 상태 유지
+```ini
+# 로그인 jwt 설정
+jwt.secret=Hello123KHAcademy456Dangsan789WelcomeToDClass
+
+# 만료(1시간 - 1 * 60 * 60 * 1000)
+jwt.expiration=3600000
+```
+
+```java
+@Component
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
+
+    /**
+     * 필터 제외 경로 설정: 로그인, 회원가입, 정적 리소스 등은 토큰 검사 없이 통과
+     */
+    private boolean isSkipPath(String path) {
+        return path.startsWith("/login") || path.startsWith("/signup") || 
+               path.startsWith("/find") || path.startsWith("/ws") || 
+               path.startsWith("/images") || path.startsWith("/css") || 
+               path.startsWith("/js") || path.startsWith("/feed_upfiles");
+    }
+
+    @Override
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        String path = request.getRequestURI().substring(request.getContextPath().length());
+
+        // 1. OPTIONS(Preflight) 요청은 인증 없이 통과 (CORS 대응)
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 2. Authorization 헤더에서 Bearer 토큰 추출
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            // 3. JWT 서명 검증 및 데이터(Claims) 파싱
+            Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key).build()
+                    .parseClaimsJws(token).getBody();
+
+            // 4. 사용자 정보 추출 및 Request 객체에 저장
+            String memberId = claims.getSubject();
+            Integer memberNo = claims.get("memberNo", Integer.class);
+            request.setAttribute("memberNo", memberNo);
+
+            // 5. SecurityContext에 인증 객체 등록 (정상 토큰인 경우)
+            if (StringUtils.hasText(memberId) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        memberId, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+        } catch (Exception e) {
+            // 토큰 만료/위조 시 별도의 예외 처리 없이 통과 
+            // -> SecurityConfig에서 최종적으로 접근이 차단됨
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}
+```
+
+4. **CORS(Cross Origin Resource Sharing)**: Reqct(5173)과 Spring(8080) 간 다른 포트번호임에도 통신 허용
+```java
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+
+    CorsConfiguration config = new CorsConfiguration();
+
+    // 1. 통신을 허용할 프론트엔드 주소 지정
+    config.addAllowedOrigin("http://localhost:5173");
+    config.addAllowedOriginPattern("http://192.168.*.*:5173");
+
+    // 2. 모든 Header와 HTTP Method(GET, POST 등) 허용
+    config.addAllowedHeader("*");
+    config.addAllowedMethod("*");
+
+    // 3. 인증 정보(Credentials) 포함 허용
+    config.setAllowCredentials(true);
+    config.setMaxAge(3600L);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
+}
+```
+
+5. **Validation**: 아이디, 비밀번호, 닉네임의 유효성을 검증
+```java
+if(!memberId.matches("^[a-z0-9]{4,12}$")
+	|| !memberPwd.matches("^(?=.*[A-Za-z])(?=.*\\d).{8,16}$")
+	|| !memberNick.matches("^[A-Za-z0-9가-힣_.]{2,10}$")) {
+	
+	return 0;
+}
+```
 
 ### 추가 기능
 사용자 편의성과 서비스 완결성을 위해 아래 기능을 추가로 구현했습니다.
