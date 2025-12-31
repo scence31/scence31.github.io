@@ -16,7 +16,6 @@ tags: [project, react, STS]
 
 <h2 id="project-summary">프로젝트 개요</h2>
 
-![흐름 아키텍처](/assets/img/project_intro_architecture_draw.io.png)
 
 * **주제**: SNS 서비스
 * **벤치마킹**: 인스타그램, 싸이월드, 페이스북
@@ -36,6 +35,8 @@ tags: [project, react, STS]
 | **Database** | `Oracle 11g XE` |
 | **API / Lib** | `Kakao Maps API`, `JWT (JSON Web Token)` |
 | **Tools** | `GitHub`, `VS Code`, `STS` |
+
+<img src="/assets/img/project_intro_architecture_draw.io.png" width="50%">
 
 <h2 id="auth-implementation">로그인/회원가입 구현</h2>
 (여기에 내용 작성...)
