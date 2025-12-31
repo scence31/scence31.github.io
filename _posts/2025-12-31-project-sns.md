@@ -101,9 +101,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    /**
-     * 필터 제외 경로 설정: 로그인, 회원가입, 정적 리소스 등은 토큰 검사 없이 통과
-     */
+    //필터 제외 경로 설정: 로그인, 회원가입, 정적 리소스 등은 토큰 검사 없이 통과
     private boolean isSkipPath(String path) {
         return path.startsWith("/login") || path.startsWith("/signup") || 
                path.startsWith("/find") || path.startsWith("/ws") || 
@@ -197,6 +195,46 @@ if(!memberId.matches("^[a-z0-9]{4,12}$")
 	
 	return 0;
 }
+```
+
+### 로그인 요청 처리 - MVC(Service)
+```java
+@Override
+public String loginMember(Login login) {
+    
+    // 회원 조회
+    Login loginUser = loginDao.loginMember(login, sqlSession);
+
+    // 아이디 없는 경우
+    if(loginUser == null) {
+        
+        // 로그인 실패
+        return null;
+    }
+    
+    // 비밀번호 비교 (입력한 값 vs DB에 암호화된 값)
+    if(!bCryptPasswordEncoder.matches(login.getMemberPwd(), loginUser.getMemberPwd())) {
+        
+        // 로그인 실패
+        return null;
+    }
+    // JWT 서명(Signature)에 사용할 비밀 키 생성
+    // properties 파일에 정의한 jwt.secret 값 기반임
+    // HMAC-SHA256(HS256) 알고리즘에 맞는 Key 객체로 변환
+    Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    
+    String jwt = Jwts.builder()
+            .setSubject(loginUser.getMemberId()) // JWT subject 값 설정(로그인 식별자)
+            .claim("memberNo", loginUser.getMemberNo()) // 회원번호 pk를 claim에 저장
+            .claim("memberName", loginUser.getMemberName()) // 회원이름을 claim에 저장
+            .setIssuedAt(new Date()) // 토큰 발급시간 설정
+            .setExpiration(new Date(System.currentTimeMillis() + expiration)) // 토큰 만료시간 설정
+            .signWith(key, SignatureAlgorithm.HS256) // 위에서 생성한 Key와 HS256 알고리즘으로 서명
+            .compact(); // JWT 문자열 생성
+
+    // 로그인 성공
+    return jwt;
+	}
 ```
 
 ### 추가 기능
