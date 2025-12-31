@@ -36,7 +36,13 @@ tags: [project, react, STS]
 | **API / Lib** | `Kakao Maps API`, `JWT (JSON Web Token)` |
 | **Tools** | `GitHub`, `VS Code`, `STS` |
 
+* **시스템 아키텍처**
 <img src="/assets/img/project_intro_architecture_draw.io.png" width="50%" alt="시스템 아키텍처 다이어그램">
+
+* **Frontend(React)**: 클라이언트에게 보이는 화면으로, Axios 라이브러리를 통해 백엔드와 비동기 통신을 하여 부드러운 UI 사용 경험을 준다
+* **Backend(Spring Boot)**: 비즈니스 로직을 담당하는 서버로, DB와 외부 API로부터 데이터를 가공하고 전달함
+* **Data Base(Oracle)**: 모든 데이터를 관리 및 저장
+* **API(Kakao Map)**: 서버로부터 지도 데이터를 요청받아 사용자(클라이언트)에게 시각화함
 
 <h2 id="auth-implementation">로그인/회원가입 구현</h2>
 (여기에 내용 작성...)
