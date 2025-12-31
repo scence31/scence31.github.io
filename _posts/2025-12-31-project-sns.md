@@ -15,7 +15,25 @@ tags: [project, react, STS]
 ---
 
 <h2 id="project-summary">프로젝트 개요</h2>
-(여기에 내용 작성...)
+
+**주제**: SNS 서비스
+**벤치마킹**: 인스타그램, 싸이월드, 페이스북
+**특징**: 인스타그램의 빠른 소통 방식에 싸이월드의 개인 공간(방명록, 다이어리, BGM) 감성을 더해 차별화된 사용자 경험을 제공하고자 했습니다
+**참여자 수**: 4명 (기여도 25%)
+**기간**: 2025.12.11. ~ 2026.01.06. (약 4주)
+
+**담당기능**
+1. 로그인 및 회원가입 - JWT, LocalStorage 활용한 보안 중심
+2. 지도 API 연동 - 카카오지도를 활용한 위치 지정
+3. 스토리 - React Framework 활용한 게시물
+
+| 분류 | 기술 스택 (Tech Stack) |
+| :--- | :--- |
+| **Frontend** | `React`, `JavaScript (ES6+)`, `CSS3`, `Axios` |
+| **Backend** | `Java 11`, `Spring Boot (STS)`, `Spring Security`, `MyBatis` |
+| **Database** | `Oracle 11g XE` |
+| **API / Lib** | `Kakao Maps API`, `JWT (JSON Web Token)` |
+| **Tools** | `Git`, `GitHub`, `VS Code` |
 
 <h2 id="auth-implementation">로그인/회원가입 구현</h2>
 (여기에 내용 작성...)
