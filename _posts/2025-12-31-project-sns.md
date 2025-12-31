@@ -14,17 +14,17 @@ tags: [project, react, STS]
 
 ---
 
-## 프로젝트 개요 {: #project-summary }
+<h2 id="project-summary">프로젝트 개요</h2>
 (여기에 내용 작성...)
 
-## 로그인/회원가입 구현 {: #auth-implementation }
+<h2 id="auth-implementation">로그인/회원가입 구현</h2>
 (여기에 내용 작성...)
 
-## 카카오 지도 API 연동 {: #kakao-map-api }
+<h2 id="kakao-map-api">카카오 지도 API 연동</h2>
 (여기에 내용 작성...)
 
-## 스토리 기능 구현 {: #story-feature }
+<h2 id="story-feature">스토리 기능 구현</h2>
 (여기에 내용 작성...)
 
-## 트러블슈팅 및 회고 {: #troubleshooting }
+<h2 id="troubleshooting">트러블슈팅 및 회고</h2>
 (여기에 내용 작성...)
