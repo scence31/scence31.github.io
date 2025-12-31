@@ -37,6 +37,8 @@ tags: [project, react, STS]
 | **Tools** | `GitHub`, `VS Code`, `STS` |
 
 * **시스템 아키텍처**
+
+
 <img src="/assets/img/project_intro_architecture_draw.io.png" width="50%" alt="시스템 아키텍처 다이어그램">
 
 * **Frontend(React)**: 클라이언트에게 보이는 화면으로, Axios 라이브러리를 통해 백엔드와 비동기 통신을 하여 부드러운 UI 사용 경험을 준다
