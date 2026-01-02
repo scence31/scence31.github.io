@@ -274,7 +274,21 @@ public String loginMember(Login login) {
 
 
 <h2 id="kakao-map-api">카카오 지도 API 연동</h2>
-(여기에 내용 작성...)
+
+## 1. 준비(App Key 발급)
+1. **[카카오 디벨로퍼스](https://developers.kakao.com/)** 접속
+2. **내 애플리케이션** 생성
+3. **플랫폼 > Web** 에 내 사이트 도메인 등록 (테스트 시 `http://localhost` 등)
+4. **앱 키 > JavaScript 키** 복사
+
+## 2. 기본 세팅 (HTML)
+지도를 표시하기 위해 라이브러리를 로드하고, 지도가 담길 `div`를 생성
+
+```html
+<script type="text/javascript" src="//[dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_JS_KEY](https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_JS_KEY)"></script>
+```
+
+<div id="map" style="width:100%; height:400px;"></div>
 
 <h2 id="story-feature">스토리 기능 구현</h2>
 (여기에 내용 작성...)
