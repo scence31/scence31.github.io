@@ -377,7 +377,7 @@ const handlePickPlace = (p) => {
 
 <h2 id="troubleshooting">트러블슈팅</h2>
 
-## 로그인/회원가입 관련
+### 로그인/회원가입 관련
 
 * **JWT 필터 적용 후 CORS 에러 발생**
 
@@ -392,7 +392,7 @@ const handlePickPlace = (p) => {
 3. **해결**: `SecurityConfig`, `JwtAuthFilter`를 항상 일관성 있게 관리함
 
 
-## 카카오 지도 API 관련
+### 카카오 지도 API 관련
 
 * **SDK 로딩 시점 차이로 인한 `kakao is not defined` 에러**
 
