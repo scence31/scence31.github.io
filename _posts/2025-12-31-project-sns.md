@@ -9,8 +9,7 @@ tags: [project, react, STS]
 1. [프로젝트 개요](#project-summary)
 2. [로그인/회원가입 기능 구현](#auth-implementation)
 3. [카카오 지도 API 연동](#kakao-map-api)
-4. [스토리 기능 구현](#story-feature)
-5. [트러블슈팅 및 회고](#troubleshooting)
+4. [트러블슈팅 및 회고](#troubleshooting)
 
 ---
 
@@ -59,6 +58,10 @@ tags: [project, react, STS]
 ---
 
 <h2 id="auth-implementation">로그인/회원가입</h2>
+
+<img src="/assets/img/project_sns_login.png" width="50%" alt="login">
+<img src="/assets/img/project_sns_signup" width="50%" alt="signup">
+<img src="/assets/img/project_sns_findPwd.png" width="50%" alt="findPwd">
 
 **JWT(JSON Web Token) 인증 방식**
 1. 프론트엔드와 백엔드가 분리된, 도메인이 다른 구조에서도 인증을 효율적으로 처리할 수 있습니다.
@@ -275,23 +278,22 @@ public String loginMember(Login login) {
 
 <h2 id="kakao-map-api">카카오 지도 API 연동</h2>
 
-## 1. 준비(App Key 발급)
+### 준비(App Key 발급)
 1. **[카카오 디벨로퍼스](https://developers.kakao.com/)** 접속
 2. **내 애플리케이션** 생성
 3. **플랫폼 > Web** 에 내 사이트 도메인 등록 (테스트 시 `http://localhost` 등)
 4. **앱 키 > JavaScript 키** 복사
 
-## 2. 기본 세팅 (HTML)
+### 기본 세팅
 지도를 표시하기 위해 라이브러리를 로드하고, 지도가 담길 `div`를 생성
 
 ```html
-<script type="text/javascript" src="//[dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_JS_KEY](https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_JS_KEY)"></script>
+<script type="text/javascript"
+         src="//[dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_JS_KEY](https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_JS_KEY)">
+</script>
+<div id="map" style="width:100%; height:400px;"></div>
 ```
 
-<div id="map" style="width:100%; height:400px;"></div>
-
-<h2 id="story-feature">스토리 기능 구현</h2>
-(여기에 내용 작성...)
 
 <h2 id="troubleshooting">트러블슈팅 및 회고</h2>
 (여기에 내용 작성...)
