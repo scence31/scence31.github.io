@@ -1,15 +1,15 @@
 ---
-title: "[Java] JDBC(Java Database Connectivity) 특징과 구성 요소"
+title: "[Java] JDBC 특징과 구성 요소, MyBatis"
 date: 2026-01-15 09:00:00 +0900
 categories: [Java, Database]
-tags: [jdbc, java, oracle, db, backend]
+tags: [jdbc, java, oracle, db, mybatis, backend]
 ---
 
 Java 애플리케이션과 데이터베이스를 연결해 주는 표준 인터페이스
 
 ---
 
-### 1. JDBC의 주요 특징
+### JDBC 특징
 * **DB 접속 및 SQL 실행**: Java 애플리케이션이 DB에 접속하고 SQL을 실행할 수 있도록 지원한다.
 * **DB 독립적 구조**: Oracle, MySQL, MSSQL 등 DB 종류가 달라도 JDBC API 사용법은 동일하다.
 * **SQL 기반 데이터 처리**: 개발자가 직접 SQL을 작성하여 CRUD를 처리하며, 실행 결과를 Java 객체로 변환할 수 있다.
@@ -18,7 +18,7 @@ Java 애플리케이션과 데이터베이스를 연결해 주는 표준 인터�
 
 ---
 
-### 2. JDBC의 5가지 핵심 구성 요소
+### JDBC 구성 요소
 JDBC를 이용한 데이터 처리 흐름에 필수적인 요소들
 
 | 구성 요소 | 역할 및 특징 |
@@ -29,7 +29,15 @@ JDBC를 이용한 데이터 처리 흐름에 필수적인 요소들
 | **ResultSet** | `SELECT` 쿼리 실행 결과를 담는 객체 |
 | **Close** | 사용이 끝난 자원을 반납한다. 순서는 `ResultSet` -> `Statement` -> `Connection` |
 
+
+### JDBC 정리
+`Driver` -> `Connection` -> `PreparedStatement` -> `ResultSet` 구조를 통해 SQL 기반의 데이터를 처리하는 미들웨어 역할을 수행한다.
+
 ---
 
-### 3. 정리
-`Driver` -> `Connection` -> `PreparedStatement` -> `ResultSet` 구조를 통해 SQL 기반의 데이터를 처리하는 미들웨어 역할을 수행한다.
+### MyBatis
+JDBC만 사용하면 코드가 길어지고 유지보수가 어렵기 때문에 사용
+
+* **반복 코드 제거**: `try-catch-finally`, `Connection` 생성 및 `Close` 등 반복되는 코드를 내부적으로 처리
+* **SQL 분리**: Java 코드 안에 문자열로 존재하던 SQL을 별도의 XML 파일로 분리
+* **자동 매핑**: `ResultSet`에서 데이터를 하나하나 꺼내 객체에 담는 과정을 자동으로 수행
